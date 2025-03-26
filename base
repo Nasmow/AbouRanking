@@ -1,40 +1,122 @@
-import { useState, useEffect } from "react";
-import FullCalendar from "@fullcalendar/react";
-import dayGridPlugin from "@fullcalendar/daygrid";
-import interactionPlugin from "@fullcalendar/interaction";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import sys
+import requests
+import json
+import datetime
+import threading
+import subprocess
+from flask import Flask, jsonify
+from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QLabel, QTableWidget, QTableWidgetItem, QComboBox
+from PyQt6.QtCore import Qt
 
-export default function TournamentCalendar() {
-  const [tournaments, setTournaments] = useState([]);
+app = Flask(__name__)
+flask_thread = None
+react_process = None
 
-  useEffect(() => {
-    fetch("http://localhost:5000/tournaments") // Replace with your Python API endpoint
-      .then((res) => res.json())
-      .then((data) => {
-        setTournaments(
-          data.map((tournament) => ({
-            title: tournament.name,
-            start: new Date(tournament.date * 1000), // Convert timestamp to date
-            url: tournament.link,
-          }))
-        );
-      })
-      .catch((err) => console.error("Error fetching tournaments:", err));
-  }, []);
-
-  return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">SF6 Tournament Calendar</h1>
-      <FullCalendar
-        plugins={[dayGridPlugin, interactionPlugin]}
-        initialView="dayGridMonth"
-        events={tournaments}
-        eventClick={(info) => {
-          info.jsEvent.preventDefault();
-          window.open(info.event.url, "_blank");
+def scrape_start_gg(event_type="online", country_code=None):
+    """Scrapes Start.gg for upcoming SF6 tournaments in the next 30 days with filters."""
+    url = "https://api.start.gg/gql/alpha"
+    headers = {"Authorization": "Bearer 794422e7e61bb71f9e04b3595dd6a925Y"}
+    
+    today = int(datetime.datetime.utcnow().timestamp())
+    future = today + (30 * 24 * 60 * 60)  # 30 days ahead
+    
+    filters = {
+        "videogameIds": [1386],  # SF6 game ID
+        "afterDate": today,
+        "beforeDate": future
+    }
+    
+    if event_type == "online":
+        filters["isOnline"] = True
+    elif country_code:
+        filters["countryCode"] = country_code.upper()
+    
+    query = f"""
+    {{
+      tournaments(query: {{perPage: 20, filter: {json.dumps(filters)} }}) {{
+        nodes {{
+          name
+          url
+          startAt
+          isOnline
+          countryCode
         }}
-      />
-    </div>
-  );
-}
+      }}
+    }}
+    """
+    
+    response = requests.post(url, json={'query': query}, headers=headers)
+    
+    if response.status_code == 200:
+        data = response.json()
+        events = data['data']['tournaments']['nodes']
+        return [{
+            "name": event['name'],
+            "link": f"https://start.gg{event['url']}",
+            "date": event['startAt'],
+            "location": event.get("countryCode", "Online")
+        } for event in events]
+    else:
+        return []
+
+@app.route("/tournaments", methods=["GET"])
+def get_tournaments():
+    """API endpoint to fetch tournaments."""
+    return jsonify(scrape_start_gg())
+
+def run_flask():
+    app.run(debug=True, port=5000, use_reloader=False)
+
+def start_services():
+    global flask_thread, react_process
+    if not flask_thread:
+        flask_thread = threading.Thread(target=run_flask, daemon=True)
+        flask_thread.start()
+    if not react_process:
+        react_process = subprocess.Popen(["npm", "start"], cwd="./your-react-app")
+
+def stop_services():
+    global flask_thread, react_process
+    if react_process:
+        react_process.terminate()
+        react_process = None
+
+class TournamentScraperApp(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.initUI()
+    
+    def initUI(self):
+        self.setWindowTitle("SF6 Tournament Scraper")
+        self.setGeometry(200, 200, 700, 500)
+        
+        layout = QVBoxLayout()
+        
+        self.label = QLabel("Click 'Start' to launch Flask API and React app!")
+        layout.addWidget(self.label)
+        
+        self.start_button = QPushButton("Start Collection")
+        self.start_button.clicked.connect(self.start_collection)
+        layout.addWidget(self.start_button)
+        
+        self.stop_button = QPushButton("Stop Collection")
+        self.stop_button.clicked.connect(self.stop_collection)
+        layout.addWidget(self.stop_button)
+        
+        self.setLayout(layout)
+    
+    def start_collection(self):
+        self.label.setText("Starting Flask API and React app...")
+        start_services()
+        self.label.setText("Services running!")
+    
+    def stop_collection(self):
+        self.label.setText("Stopping services...")
+        stop_services()
+        self.label.setText("Services stopped!")
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = TournamentScraperApp()
+    window.show()
+    sys.exit(app.exec())
