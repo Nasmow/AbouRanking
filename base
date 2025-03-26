@@ -1,0 +1,40 @@
+import { useState, useEffect } from "react";
+import FullCalendar from "@fullcalendar/react";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import interactionPlugin from "@fullcalendar/interaction";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+
+export default function TournamentCalendar() {
+  const [tournaments, setTournaments] = useState([]);
+
+  useEffect(() => {
+    fetch("http://localhost:5000/tournaments") // Replace with your Python API endpoint
+      .then((res) => res.json())
+      .then((data) => {
+        setTournaments(
+          data.map((tournament) => ({
+            title: tournament.name,
+            start: new Date(tournament.date * 1000), // Convert timestamp to date
+            url: tournament.link,
+          }))
+        );
+      })
+      .catch((err) => console.error("Error fetching tournaments:", err));
+  }, []);
+
+  return (
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-4">SF6 Tournament Calendar</h1>
+      <FullCalendar
+        plugins={[dayGridPlugin, interactionPlugin]}
+        initialView="dayGridMonth"
+        events={tournaments}
+        eventClick={(info) => {
+          info.jsEvent.preventDefault();
+          window.open(info.event.url, "_blank");
+        }}
+      />
+    </div>
+  );
+}
