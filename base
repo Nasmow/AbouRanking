@@ -1,122 +1,111 @@
-import sys
-import requests
-import json
-import datetime
-import threading
-import subprocess
-from flask import Flask, jsonify
-from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QLabel, QTableWidget, QTableWidgetItem, QComboBox
-from PyQt6.QtCore import Qt
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SF6 Tournament Calendar</title>
+    <link href="https://cdn.jsdelivr.net/npm/@fullcalendar/core@3.3.2/main.css" rel="stylesheet" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .filters {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .filters select {
+            margin: 0 10px;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        #calendar {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
 
-app = Flask(__name__)
-flask_thread = None
-react_process = None
-
-def scrape_start_gg(event_type="online", country_code=None):
-    """Scrapes Start.gg for upcoming SF6 tournaments in the next 30 days with filters."""
-    url = "https://api.start.gg/gql/alpha"
-    headers = {"Authorization": "Bearer 794422e7e61bb71f9e04b3595dd6a925Y"}
+    <h1>SF6 Tournament Calendar</h1>
     
-    today = int(datetime.datetime.utcnow().timestamp())
-    future = today + (30 * 24 * 60 * 60)  # 30 days ahead
-    
-    filters = {
-        "videogameIds": [1386],  # SF6 game ID
-        "afterDate": today,
-        "beforeDate": future
-    }
-    
-    if event_type == "online":
-        filters["isOnline"] = True
-    elif country_code:
-        filters["countryCode"] = country_code.upper()
-    
-    query = f"""
-    {{
-      tournaments(query: {{perPage: 20, filter: {json.dumps(filters)} }}) {{
-        nodes {{
-          name
-          url
-          startAt
-          isOnline
-          countryCode
-        }}
-      }}
-    }}
-    """
-    
-    response = requests.post(url, json={'query': query}, headers=headers)
-    
-    if response.status_code == 200:
-        data = response.json()
-        events = data['data']['tournaments']['nodes']
-        return [{
-            "name": event['name'],
-            "link": f"https://start.gg{event['url']}",
-            "date": event['startAt'],
-            "location": event.get("countryCode", "Online")
-        } for event in events]
-    else:
-        return []
-
-@app.route("/tournaments", methods=["GET"])
-def get_tournaments():
-    """API endpoint to fetch tournaments."""
-    return jsonify(scrape_start_gg())
-
-def run_flask():
-    app.run(debug=True, port=5000, use_reloader=False)
-
-def start_services():
-    global flask_thread, react_process
-    if not flask_thread:
-        flask_thread = threading.Thread(target=run_flask, daemon=True)
-        flask_thread.start()
-    if not react_process:
-        react_process = subprocess.Popen(["npm", "start"], cwd="./your-react-app")
-
-def stop_services():
-    global flask_thread, react_process
-    if react_process:
-        react_process.terminate()
-        react_process = None
-
-class TournamentScraperApp(QWidget):
-    def __init__(self):
-        super().__init__()
-        self.initUI()
-    
-    def initUI(self):
-        self.setWindowTitle("SF6 Tournament Scraper")
-        self.setGeometry(200, 200, 700, 500)
+    <div class="filters">
+        <select id="eventType">
+            <option value="any">All Events</option>
+            <option value="online">Online</option>
+            <option value="offline">Offline</option>
+        </select>
         
-        layout = QVBoxLayout()
-        
-        self.label = QLabel("Click 'Start' to launch Flask API and React app!")
-        layout.addWidget(self.label)
-        
-        self.start_button = QPushButton("Start Collection")
-        self.start_button.clicked.connect(self.start_collection)
-        layout.addWidget(self.start_button)
-        
-        self.stop_button = QPushButton("Stop Collection")
-        self.stop_button.clicked.connect(self.stop_collection)
-        layout.addWidget(self.stop_button)
-        
-        self.setLayout(layout)
-    
-    def start_collection(self):
-        self.label.setText("Starting Flask API and React app...")
-        start_services()
-        self.label.setText("Services running!")
-    
-    def stop_collection(self):
-        self.label.setText("Stopping services...")
-        stop_services()
-        self.label.setText("Services stopped!")
+        <select id="country">
+            <option value="any">All Countries</option>
+            <option value="FR">France</option>
+            <option value="DE">Germany</option>
+            <option value="UK">United Kingdom</option>
+            <option value="ES">Spain</option>
+            <option value="IT">Italy</option>
+            <option value="NL">Netherlands</option>
+            <option value="SE">Sweden</option>
+            <option value="PL">Poland</option>
+        </select>
+    </div>
 
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = TournamentScraperApp()
-    window.show()
-    sys.exit(app.exec())
+    <div id="calendar"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@3.3.2/main.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@3.3.2/main.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/interaction@3.3.2/main.min.js"></script>
+    <script>
+        const eventTypeSelect = document.getElementById("eventType");
+        const countrySelect = document.getElementById("country");
+        
+        async function fetchTournaments() {
+            const response = await fetch("http://localhost:5000/tournaments"); // Replace with Flask API URL if hosted
+            const data = await response.json();
+
+            const filteredData = data
+                .filter(tournament => 
+                    eventTypeSelect.value === "any" || 
+                    (eventTypeSelect.value === "online" && tournament.location === "Online") ||
+                    (eventTypeSelect.value === "offline" && tournament.location !== "Online")
+                )
+                .filter(tournament => 
+                    countrySelect.value === "any" || tournament.location === countrySelect.value
+                )
+                .map(tournament => ({
+                    title: tournament.name,
+                    start: new Date(tournament.date * 1000), // Convert timestamp to date
+                    url: tournament.link
+                }));
+
+            return filteredData;
+        }
+
+        async function renderCalendar() {
+            const events = await fetchTournaments();
+
+            const calendar = new FullCalendar.Calendar(document.getElementById("calendar"), {
+                plugins: [ 'dayGrid', 'interaction' ],
+                initialView: 'dayGridMonth',
+                events: events,
+                eventClick: function(info) {
+                    info.jsEvent.preventDefault(); // Don't let the browser navigate
+                    window.open(info.event.url, "_blank");
+                }
+            });
+
+            calendar.render();
+        }
+
+        eventTypeSelect.addEventListener("change", renderCalendar);
+        countrySelect.addEventListener("change", renderCalendar);
+
+        renderCalendar();  // Initial render
+    </script>
+</body>
+</html>
