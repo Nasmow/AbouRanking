@@ -125,6 +125,13 @@
   <script>
     // Hardcoded months and years (April 2024–October 2024, January 2025–April 2025)
     const months = [
+      { month: 'April', year: '2024' },
+      { month: 'May', year: '2024' },
+      { month: 'June', year: '2024' },
+      { month: 'July', year: '2024' },
+      { month: 'August', year: '2024' },
+      { month: 'September', year: '2024' },
+      { month: 'October', year: '2024' },
       { month: 'January', year: '2025' },
       { month: 'February', year: '2025' },
       { month: 'March', year: '2025' },
@@ -166,7 +173,7 @@
         contentsContainer.appendChild(contentDiv);
 
         // Load Excel data for this month
-        loadExcelData(`./Rankings_${item.Month}_${item.year}.xlsx`, `${monthId}-table`);
+        loadExcelData(`./Rankings_${item.month}_${item.year}.xlsx`, `${monthId}-table`);
       });
     }
 
