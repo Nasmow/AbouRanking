@@ -8,8 +8,8 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- XLSX Library CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <!-- Google Fonts: Noto Sans JP and Zen Kurenaido -->
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Zen+Kurenaido&display=swap" rel="stylesheet">
+  <!-- Google Fonts: Noto Sans JP and Zen Maru Gothic -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Zen+Maru+Gothic:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
       background: url('./abou_dojo_poster.jpg') no-repeat center center fixed;
@@ -20,7 +20,7 @@
     .container {
       background: url('./ranking_background.jpg') no-repeat center center;
       background-size: cover;
-      background-color: rgba(255, 255, 255, 0.85); /* Slightly more opaque white overlay for readability */
+      background-color: rgba(255, 255, 255, 0.9); /* Increased opacity for readability */
       border-radius: 10px;
       padding: 1.5rem;
       backdrop-filter: blur(5px);
@@ -35,7 +35,7 @@
     .ranking-table {
       background: url('./ranking_background.jpg') no-repeat center center;
       background-size: cover;
-      background-color: rgba(255, 255, 255, 0.85); /* Slightly more opaque white overlay for readability */
+      background-color: rgba(255, 255, 255, 0.9); /* Increased opacity for readability */
       border-radius: 10px;
       overflow: hidden;
       border: 2px solid #DC143C; /* Crimson border */
@@ -124,7 +124,7 @@
       background: #DC143C;
     }
     h1 {
-      font-family: 'Zen Kurenaido', sans-serif; /* Brush-style font as fallback */
+      font-family: 'Zen Maru Gothic', sans-serif; /* Brush-style font */
       color: #6B4E31; /* Brown color to match the background */
       text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff; /* White outline */
     }
@@ -202,8 +202,8 @@
         loadExcelData(`./Rankings_${item.month}_${item.year}.xlsx`, `${monthId}-table`);
       });
 
-      // Center the April 2025 tab after a slight delay to ensure DOM is rendered
-      setTimeout(() => centerTab('april-2025'), 100);
+      // Center the April 2025 tab after a longer delay to ensure DOM and styles are applied
+      setTimeout(() => centerTab('april-2025'), 300);
     }
 
     // Tab switching function
@@ -213,7 +213,7 @@
       document.getElementById(monthId).classList.add('active');
       document.querySelector(`button[onclick="showTab('${monthId}')"]`).classList.add('active');
       // Re-center the active tab when clicked
-      setTimeout(() => centerTab(monthId), 100);
+      setTimeout(() => centerTab(monthId), 300);
     }
 
     // Function to load and display Excel data
@@ -263,6 +263,8 @@
       const tabsContainer = document.getElementById('tabs');
       const targetTab = document.querySelector(`button[data-month-id="${monthId}"]`);
       if (targetTab) {
+        // Force a reflow to ensure the transform scale is applied
+        targetTab.getBoundingClientRect();
         const tabRect = targetTab.getBoundingClientRect();
         const containerRect = tabsContainer.getBoundingClientRect();
         // Adjust scroll position to account for the active tab's larger size
