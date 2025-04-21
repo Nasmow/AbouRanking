@@ -17,6 +17,12 @@
       font-weight: normal;
       font-style: normal;
     }
+    @font-face {
+      font-family: 'Niagato';
+      src: url('./Niagato.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+    }
     body {
       background: url('./abou_dojo_poster.jpg') no-repeat center center fixed;
       background-size: cover;
@@ -51,15 +57,13 @@
       padding: 1rem;
       text-align: left;
       border-bottom: 1px solid rgba(220, 20, 60, 0.3); /* Crimson border */
+      font-family: 'Niagato', sans-serif; /* Use Niagato font */
+      color: #6B4E31; /* Brown text */
+      text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff; /* White outline */
     }
     .ranking-table th {
       background: rgba(139, 0, 0, 0.5); /* Dark red header */
       font-weight: bold;
-      color: #6B4E31; /* Brown text */
-    }
-    .ranking-table td {
-      color: #6B4E31; /* Brown text for better readability */
-      text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff; /* White outline for contrast */
     }
     /* Font sizes for top 3 ranks */
     .ranking-table tr.rank-1 td {
@@ -78,6 +82,14 @@
       position: relative;
       max-width: 100%;
       overflow: hidden;
+    }
+    .year-display {
+      font-family: 'Onsen Japan', sans-serif;
+      color: #6B4E31; /* Brown text */
+      text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff; /* White outline */
+      font-size: 1.5rem;
+      text-align: center;
+      margin-bottom: 0.5rem;
     }
     .tabs-scroll {
       display: flex;
@@ -98,6 +110,7 @@
       padding: 0.5rem 1rem;
       white-space: nowrap;
       font-size: 1rem; /* Default font size for tabs */
+      font-family: 'Onsen Japan', sans-serif; /* Use Onsen Japan font */
     }
     .tab-button:hover {
       background: #DC143C; /* Crimson on hover */
@@ -140,12 +153,12 @@
       bottom: 20px;
       right: 20px;
       color: #6B4E31; /* Brown color */
-      opacity: 0.5; /* Subtle transparency */
+      opacity: 0.4; /* 40% opacity */
       font-size: 1.5rem;
-      transform: rotate(-45deg); /* Diagonal orientation */
       pointer-events: none; /* Prevent interaction */
       z-index: 1000; /* Ensure it stays on top */
-      font-family: 'Noto Sans JP', sans-serif;
+      font-family: 'Onsen Japan', sans-serif; /* Use Onsen Japan font */
+      text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff; /* White outline */
     }
   </style>
 </head>
@@ -155,6 +168,7 @@
     
     <!-- Tabs -->
     <div class="tabs-container">
+      <div id="year-display" class="year-display"></div>
       <div class="scroll-arrow left" onclick="scrollTabs(-100)">◀</div>
       <div id="tabs" class="tabs-scroll"></div>
       <div class="scroll-arrow right" onclick="scrollTabs(100)">▶</div>
@@ -186,7 +200,12 @@
     // Function to generate tabs and content
     function generateTabs() {
       const tabsContainer = document.getElementById('tabs');
+      const yearDisplay = document.getElementById('year-display');
       const contentsContainer = document.getElementById('tab-contents');
+
+      // Group months by year
+      const years = [...new Set(months.map(item => item.year))];
+      let currentYear = '2025'; // Default to 2025 since April 2025 is active
 
       months.forEach((item, index) => {
         const monthId = `${item.month.toLowerCase()}-${item.year}`;
@@ -196,7 +215,7 @@
         const button = document.createElement('button');
         // Set April 2025 as the default active tab
         button.className = `tab-button ${item.month === 'April' && item.year === '2025' ? 'active' : ''}`;
-        button.textContent = displayName;
+        button.textContent = item.month; // Show only the month
         button.onclick = () => showTab(monthId);
         button.setAttribute('data-month-id', monthId); // For centering
         tabsContainer.appendChild(button);
@@ -224,6 +243,18 @@
         loadExcelData(`./Rankings_${item.month}_${item.year}.xlsx`, `${monthId}-table`);
       });
 
+      // Set initial year display
+      yearDisplay.textContent = currentYear;
+
+      // Update year when switching tabs
+      document.querySelectorAll('.tab-button').forEach(button => {
+        button.addEventListener('click', () => {
+          const monthId = button.getAttribute('data-month-id');
+          const year = monthId.split('-')[1];
+          yearDisplay.textContent = year;
+        });
+      });
+
       // Center the April 2025 tab after a longer delay to ensure DOM and styles are applied
       setTimeout(() => centerTab('april-2025'), 300);
     }
@@ -232,8 +263,8 @@
     function showTab(monthId) {
       document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
       document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-      document.getElementById(monthId).classList.add('active');
-      document.querySelector(`button[onclick="showTab('${monthId}')"]`).classList.add('active');
+      document.getElementById(monthId).className = 'tab-content active';
+      document.querySelector(`button[onclick="showTab('${monthId}')"]`).className = 'tab-button active';
       // Re-center the active tab when clicked
       setTimeout(() => centerTab(monthId), 300);
     }
