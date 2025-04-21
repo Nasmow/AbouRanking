@@ -7,7 +7,6 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            /* Set the provided image as background */
             background-image: url('abou_dojo_poster.jpg');
             background-size: cover;
             background-position: center;
@@ -16,7 +15,6 @@
             padding: 20px;
             position: relative;
         }
-        /* Add a semi-transparent overlay for readability */
         body::before {
             content: '';
             position: absolute;
@@ -24,29 +22,29 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5); /* Dark overlay */
+            background: rgba(0, 0, 0, 0.5);
             z-index: 1;
         }
         h1 {
             text-align: center;
-            color: #fff; /* White text for contrast */
+            color: #fff;
             position: relative;
-            z-index: 2; /* Above the overlay */
+            z-index: 2;
         }
         .month-section {
             margin-bottom: 40px;
             position: relative;
-            z-index: 2; /* Above the overlay */
+            z-index: 2;
         }
         .month-section h2 {
-            color: #ddd; /* Light gray for contrast */
+            color: #ddd;
             border-bottom: 2px solid rgba(255, 255, 255, 0.3);
             padding-bottom: 5px;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            background-color: rgba(255, 255, 255, 0.9); /* Slightly transparent white */
+            background-color: rgba(255, 255, 255, 0.9);
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
             margin-bottom: 20px;
         }
@@ -90,10 +88,17 @@
 
         async function displayRankings() {
             const months = [
+                { name: 'April 2024', file: 'Rankings_April_2024.xlsx' },
+                { name: 'May 2024', file: 'Rankings_May_2024.xlsx' },
+                { name: 'June 2024', file: 'Rankings_June_2024.xlsx' },
+                { name: 'July 2024', file: 'Rankings_July_2024.xlsx' },
                 { name: 'August 2024', file: 'Rankings_August_2024.xlsx' },
                 { name: 'September 2024', file: 'Rankings_September_2024.xlsx' },
-                { name: 'October 2024', file: 'Rankings_October_2024.xlsx' }
-                // Excluded November and December as requested
+                { name: 'October 2024', file: 'Rankings_October_2024.xlsx' },
+                { name: 'January 2025', file: 'Rankings_January_2025.xlsx' },
+                { name: 'February 2025', file: 'Rankings_February_2025.xlsx' },
+                { name: 'March 2025', file: 'Rankings_March_2025.xlsx' },
+                { name: 'April 2025', file: 'Rankings_April_2025.xlsx' }
             ];
 
             const container = document.getElementById('rankings-container');
