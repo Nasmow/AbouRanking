@@ -3,21 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Monthly Ladder Abou Dojo</title>
+  <title>Classement mensuel Abou Dojo</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- XLSX Library CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <!-- Google Fonts: Noto Sans JP and Zen Kurenaido -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Zen+Kurenaido&display=swap" rel="stylesheet">
   <style>
     body {
       background: url('./abou_dojo_poster.jpg') no-repeat center center fixed;
       background-size: cover;
       min-height: 100vh;
-      font-family: 'Arial', sans-serif;
+      font-family: 'Noto Sans JP', sans-serif;
     }
     .container {
-      background: url('https://www.transparenttextures.com/patterns/paper-fibers.png') repeat,
-                  rgba(139, 0, 0, 0.2); /* Dark red semi-transparent overlay with washi texture */
+      background: url('./ranking_background.jpg') no-repeat center center;
+      background-size: cover;
+      background-color: rgba(255, 255, 255, 0.8); /* Slight white overlay for readability */
       border-radius: 10px;
       padding: 1.5rem;
       backdrop-filter: blur(5px);
@@ -30,8 +33,9 @@
       display: block;
     }
     .ranking-table {
-      background: url('https://www.transparenttextures.com/patterns/paper-fibers.png') repeat,
-                  rgba(255, 255, 255, 0.15); /* Semi-transparent white with washi texture */
+      background: url('./ranking_background.jpg') no-repeat center center;
+      background-size: cover;
+      background-color: rgba(255, 255, 255, 0.8); /* Slight white overlay for readability */
       border-radius: 10px;
       overflow: hidden;
       border: 2px solid #DC143C; /* Crimson border */
@@ -49,6 +53,11 @@
     .ranking-table td {
       color: #FFE4E1; /* Light pinkish text for readability */
       text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; /* Black outline for readability */
+    }
+    /* Larger font size for top 3 ranks */
+    .ranking-table tr.top-3 td {
+      font-size: 1.25rem; /* Larger font size for top 3 */
+      font-weight: bold;
     }
     .tabs-container {
       position: relative;
@@ -104,13 +113,15 @@
       background: #DC143C;
     }
     h1 {
+      font-family: 'Zen Kurenaido', sans-serif; /* Brush-style font */
+      color: #B22222; /* Red color to match the image */
       text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; /* Black outline */
     }
   </style>
 </head>
 <body class="flex items-center justify-center p-4">
   <div class="container w-full max-w-4xl">
-    <h1 class="text-3xl font-bold text-white text-center mb-6">Classement mensuel Abou Dojo</h1>
+    <h1 class="text-3xl font-bold text-center mb-6">Classement mensuel Abou Dojo</h1>
     
     <!-- Tabs -->
     <div class="tabs-container">
@@ -150,7 +161,7 @@
 
         // Create tab button
         const button = document.createElement('button');
-        // Set April 2025 as the default active tab (last item in the array)
+        // Set April 2025 as the default active tab
         button.className = `tab-button ${item.month === 'April' && item.year === '2025' ? 'active' : ''}`;
         button.textContent = displayName;
         button.onclick = () => showTab(monthId);
@@ -205,6 +216,9 @@
         tbody.innerHTML = '';
         jsonData.forEach(row => {
           const tr = document.createElement('tr');
+          // Add top-3 class if rank (Placement) is 1, 2, or 3
+          const isTop3 = row.Placement === 1 || row.Placement === 2 || row.Placement === 3;
+          tr.className = isTop3 ? 'top-3' : '';
           tr.innerHTML = `
             <td>${row.Placement || ''}</td>
             <td>${row.Player || ''}</td>
