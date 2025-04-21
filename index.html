@@ -3,19 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ladder Abou Dojo</title>
+  <title>Monthly Ladder Abou Dojo</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- XLSX Library CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <!-- Google Fonts: Noto Sans JP and Zen Maru Gothic -->
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Zen+Maru+Gothic:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Google Fonts: Noto Sans JP -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
   <style>
+    @font-face {
+      font-family: 'Onsen Japan';
+      src: url('./OnsenJapanDemoRegular.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+    }
     body {
       background: url('./abou_dojo_poster.jpg') no-repeat center center fixed;
       background-size: cover;
       min-height: 100vh;
       font-family: 'Noto Sans JP', sans-serif;
+      position: relative; /* For positioning the watermark */
     }
     .container {
       background: url('./ranking_background.jpg') no-repeat center center;
@@ -124,15 +131,27 @@
       background: #DC143C;
     }
     h1 {
-      font-family: 'Zen Maru Gothic', sans-serif; /* Brush-style font */
+      font-family: 'Onsen Japan', sans-serif; /* Use locally loaded font */
       color: #6B4E31; /* Brown color to match the background */
       text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff; /* White outline */
+    }
+    .watermark {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      color: #6B4E31; /* Brown color */
+      opacity: 0.5; /* Subtle transparency */
+      font-size: 1.5rem;
+      transform: rotate(-45deg); /* Diagonal orientation */
+      pointer-events: none; /* Prevent interaction */
+      z-index: 1000; /* Ensure it stays on top */
+      font-family: 'Noto Sans JP', sans-serif;
     }
   </style>
 </head>
 <body class="flex items-center justify-center p-4">
   <div class="container w-full max-w-4xl">
-    <h1 class="text-3xl font-bold text-center mb-6">Classement mensuel Abou Dojo</h1>
+    <h1 class="text-3xl font-bold text-center mb-6">Monthly Ladder Abou Dojo</h1>
     
     <!-- Tabs -->
     <div class="tabs-container">
@@ -144,6 +163,9 @@
     <!-- Tab Content -->
     <div id="tab-contents"></div>
   </div>
+
+  <!-- Watermark -->
+  <div class="watermark">By Nasmo</div>
 
   <script>
     // Hardcoded months and years (April 2024–October 2024, January 2025–April 2025, excluding November and December 2024)
