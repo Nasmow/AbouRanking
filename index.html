@@ -3,227 +3,193 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Abou Dojo Rankings - Nasmow Calendar</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- SheetJS CDN for Excel parsing -->
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <!-- Google Fonts: Roboto and Cinzel -->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Cinzel:wght@700&display=swap" rel="stylesheet">
+    <title>Calendar</title>
+    <!-- Import Montserrat font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #1a1a1a;
-            color: #ffffff;
-            background-image: file; "peakpx.jpg"
+            font-family: 'Montserrat', sans-serif;
+            /* Set the provided image as background */
+            background-image: url('abou_dojo_poster.jpg');
             background-size: cover;
-            background-attachment: fixed;
             background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            /* Add a semi-transparent overlay to improve text readability */
+            position: relative;
         }
-        h1, h2, h3 {
-            font-family: 'Cinzel', serif;
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5); /* Dark overlay for readability */
+            z-index: 1;
         }
-        .tab-button.active {
-            background-color: #b91c1c; /* Red active tab */
-            color: #ffffff;
+        .calendar {
+            background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent white background */
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            width: 350px;
+            text-align: center;
+            position: relative;
+            z-index: 2; /* Ensure calendar is above the overlay */
+            backdrop-filter: blur(5px); /* Add a blur effect to the background */
         }
-        .tab-button {
-            background-color: #4a4a4a;
-            color: #ffffff;
-            transition: background-color 0.3s;
+        .calendar-header {
+            background-color: transparent;
+            color: #FFFFFF; /* White text */
+            padding: 15px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        .tab-button:hover {
-            background-color: #b91c1c;
+        .calendar-header h2 {
+            font-size: 24px;
+            font-weight: 800;
+            text-transform: uppercase;
+            -webkit-text-stroke: 1px #000000; /* Black outline */
+            text-stroke: 1px #000000;
+            margin: 0;
         }
-        table {
+        .calendar-header button {
+            background: none;
+            border: none;
+            color: #FFC107; /* Yellow text */
+            font-size: 16px;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .calendar-header button:hover {
+            color: #FFFFFF; /* White on hover */
+        }
+        .calendar-body {
+            padding: 10px;
+        }
+        .calendar-body table {
             width: 100%;
             border-collapse: collapse;
-            background-color: rgba(0, 0, 0, 0.85);
         }
-        th, td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid #4a4a4a;
+        .calendar-body th, .calendar-body td {
+            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.3); /* Semi-transparent border */
+            color: #FFFFFF; /* White text */
+            font-weight: 700;
         }
-        th {
-            background-color: #b91c1c;
-            color: #ffffff;
-            font-weight: bold;
+        .calendar-body th {
+            background-color: rgba(255, 255, 255, 0.2);
+            text-transform: uppercase;
+            font-size: 14px;
         }
-        tr:nth-child(even) {
-            background-color: #2a2a2a;
+        .calendar-body td {
+            background-color: rgba(0, 0, 0, 0.3);
         }
-        tr:hover {
-            background-color: #3a3a3a;
+        .calendar-body td:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            cursor: pointer;
         }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
+        .today {
+            background-color: #FFC107; /* Yellow background for today */
+            color: #000000; /* Black text for contrast */
+            font-weight: 800;
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="bg-black bg-opacity-90 py-6">
-        <div class="container">
-            <h1 class="text-4xl text-center text-red-600">Abou Dojo Rankings</h1>
-            <p class="text-center text-gray-300 mt-2">Cumulative Monthly Rankings for Street Fighter 6 Events</p>
+    <div class="calendar">
+        <div class="calendar-header">
+            <button onclick="previousMonth()">Previous</button>
+            <h2 id="month-year">January 2024</h2>
+            <button onclick="nextMonth()">Next</button>
         </div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="container my-8">
-        <!-- Tabs -->
-        <div class="flex flex-wrap gap-2 mb-6" id="tabs">
-            <!-- Tabs will be populated dynamically -->
+        <div class="calendar-body">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Sun</th>
+                        <th>Mon</th>
+                        <th>Tue</th>
+                        <th>Wed</th>
+                        <th>Thu</th>
+                        <th>Fri</th>
+                        <th>Sat</th>
+                    </tr>
+                </thead>
+                <tbody id="calendar-days">
+                </tbody>
+            </table>
         </div>
-
-        <!-- Tab Content -->
-        <div id="tab-content">
-            <!-- Tables will be populated dynamically -->
-        </div>
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-black bg-opacity-90 py-4">
-        <div class="container text-center text-gray-400">
-            <p>Powered by <a href="https://github.com/Nasmow/Calendar" class="text-red-500 hover:underline" target="_blank">Nasmo</a></p>
-        </div>
-    </footer>
+    </div>
 
     <script>
-        // Define the months to display (July 2024 to April 2025)
-        const months = [
-            { name: "July 2024", file: "Rankings_July_2024.xlsx" },
-            { name: "August 2024", file: "Rankings_August_2024.xlsx" },
-            { name: "September 2024", file: "Rankings_September_2024.xlsx" },
-            { name: "October 2024", file: "Rankings_October_2024.xlsx" },
-            { name: "January 2025", file: "Rankings_January_2025.xlsx" },
-            { name: "February 2025", file: "Rankings_February_2025.xlsx" },
-            { name: "March 2025", file: "Rankings_March_2025.xlsx" },
-            { name: "April 2025", file: "Rankings_April_2025.xlsx" }
-        ];
+        let today = new Date();
+        let currentMonth = today.getMonth();
+        let currentYear = today.getFullYear();
 
-        // Create tabs dynamically
-        const tabsContainer = document.getElementById('tabs');
-        months.forEach((month, index) => {
-            const button = document.createElement('button');
-            button.className = 'tab-button px-4 py-2 rounded-t-lg font-semibold';
-            button.textContent = month.name;
-            button.onclick = () => switchTab(index);
-            tabsContainer.appendChild(button);
-        });
+        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-        // Create tab content containers
-        const tabContent = document.getElementById('tab-content');
-        months.forEach((month, index) => {
-            const div = document.createElement('div');
-            div.id = `tab-${index}`;
-            div.className = 'tab-pane hidden';
-            div.innerHTML = `<h2 class="text-2xl font-bold mb-4">${month.name}</h2>
-                             <div id="table-${index}"><p class="text-gray-400">Loading data...</p></div>`;
-            tabContent.appendChild(div);
-        });
+        function generateCalendar(month, year) {
+            let firstDay = new Date(year, month).getDay();
+            let daysInMonth = 32 - new Date(year, month, 32).getDate();
 
-        // Show the first tab by default
-        let activeTab = 0;
-        switchTab(0);
+            let tbody = document.getElementById('calendar-days');
+            tbody.innerHTML = '';
 
-        function switchTab(index) {
-            // Update active tab
-            document.querySelectorAll('.tab-button').forEach((btn, i) => {
-                btn.classList.toggle('active', i === index);
-            });
-            document.querySelectorAll('.tab-pane').forEach((pane, i) => {
-                pane.classList.toggle('hidden', i !== index);
-            });
-            activeTab = index;
+            document.getElementById('month-year').innerText = `${months[month]} ${year}`;
 
-            // Load data for the tab if not already loaded
-            loadExcelData(index);
-        }
+            let date = 1;
+            for (let i = 0; i < 6; i++) {
+                let row = document.createElement('tr');
 
-        // Cache for loaded data to avoid refetching
-        const loadedData = {};
-
-        async function loadExcelData(index) {
-            const month = months[index];
-            const tableContainer = document.getElementById(`table-${index}`);
-
-            // Check if data is already loaded
-            if (loadedData[index]) {
-                renderTable(loadedData[index], tableContainer, month.name);
-                return;
-            }
-
-            try {
-                const url = `https://raw.githubusercontent.com/Nasmow/Calendar/main/${month.file}`;
-                const response = await fetch(url);
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: File not found`);
+                for (let j = 0; j < 7; j++) {
+                    if (i === 0 && j < firstDay) {
+                        let cell = document.createElement('td');
+                        row.appendChild(cell);
+                    } else if (date > daysInMonth) {
+                        break;
+                    } else {
+                        let cell = document.createElement('td');
+                        cell.innerText = date;
+                        if (date === today.getDate() && year === today.getFullYear() && month === today.getMonth()) {
+                            cell.classList.add('today');
+                        }
+                        row.appendChild(cell);
+                        date++;
+                    }
                 }
-                const arrayBuffer = await response.arrayBuffer();
-                const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-                const sheetName = workbook.SheetNames[0];
-                const sheet = workbook.Sheets[sheetName];
-                const jsonData = XLSX.utils.sheet_to_json(sheet);
-
-                // Filter out "Events Entered" and ensure all expected columns are present
-                const filteredData = jsonData.map(row => ({
-                    Player: row.Player || 'Unknown',
-                    Placement: row.Placement || '-',
-                    "Total Points": row["Total Points"] || 0,
-                    "Win Rate (%)": row["Win Rate (%)"] || '0.00',
-                    "Per-Event Rankings": row["Per-Event Rankings"] || '-'
-                }));
-
-                loadedData[index] = filteredData;
-                renderTable(filteredData, tableContainer, month.name);
-            } catch (error) {
-                console.error(`Error loading ${month.file}:`, error);
-                tableContainer.innerHTML = `<p class="text-red-400">No data available for ${month.name}. Ensure the file "${month.file}" exists in the repository.</p>`;
+                tbody.appendChild(row);
             }
         }
 
-        function renderTable(data, container, monthName) {
-            if (!data || data.length === 0) {
-                container.innerHTML = `<p class="text-gray-400">No rankings available for ${monthName}.</p>`;
-                return;
+        function previousMonth() {
+            currentMonth--;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
             }
-
-            // Create table
-            const table = document.createElement('table');
-            table.className = 'min-w-full';
-
-            // Table header
-            const thead = document.createElement('thead');
-            const headerRow = document.createElement('tr');
-            const columns = ["Player", "Placement", "Total Points", "Win Rate (%)", "Per-Event Rankings"];
-            columns.forEach(col => {
-                const th = document.createElement('th');
-                th.textContent = col;
-                headerRow.appendChild(th);
-            });
-            thead.appendChild(headerRow);
-            table.appendChild(thead);
-
-            // Table body
-            const tbody = document.createElement('tbody');
-            data.forEach(row => {
-                const tr = document.createElement('tr');
-                columns.forEach(col => {
-                    const td = document.createElement('td');
-                    td.textContent = row[col];
-                    tr.appendChild(td);
-                });
-                tbody.appendChild(tr);
-            });
-            table.appendChild(tbody);
-
-            container.innerHTML = '';
-            container.appendChild(table);
+            generateCalendar(currentMonth, currentYear);
         }
+
+        function nextMonth() {
+            currentMonth++;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            generateCalendar(currentMonth, currentYear);
+        }
+
+        generateCalendar(currentMonth, currentYear);
     </script>
 </body>
 </html>
