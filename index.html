@@ -1,146 +1,164 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rankings</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-image: url('abou_dojo_poster.jpg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            margin: 0;
-            padding: 20px;
-            position: relative;
-        }
-        body::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1;
-        }
-        h1 {
-            text-align: center;
-            color: #fff;
-            position: relative;
-            z-index: 2;
-        }
-        .month-section {
-            margin-bottom: 40px;
-            position: relative;
-            z-index: 2;
-        }
-        .month-section h2 {
-            color: #ddd;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
-            padding-bottom: 5px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background-color: rgba(255, 255, 255, 0.9);
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-            margin-bottom: 20px;
-        }
-        th, td {
-            padding: 10px;
-            border: 1px solid #ddd;
-            text-align: left;
-        }
-        th {
-            background-color: #f4f4f4;
-            color: #333;
-        }
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-        tr:hover {
-            background-color: #f1f1f1;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monthly Rankings</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- XLSX Library CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    body {
+      background: url('./abou_dojo_poster.jpg') no-repeat center center fixed;
+      background-size: cover;
+      min-height: 100vh;
+      font-family: 'Arial', sans-serif;
+    }
+    .container {
+      background: url('https://www.transparenttextures.com/patterns/paper-fibers.png') repeat,
+                  rgba(139, 0, 0, 0.2); /* Dark red semi-transparent overlay with washi texture */
+      border-radius: 10px;
+      padding: 1.5rem;
+      backdrop-filter: blur(5px);
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    .ranking-table {
+      background: url('https://www.transparenttextures.com/patterns/paper-fibers.png') repeat,
+                  rgba(255, 255, 255, 0.15); /* Semi-transparent white with washi texture */
+      border-radius: 10px;
+      overflow: hidden;
+      border: 2px solid #DC143C; /* Crimson border */
+    }
+    .ranking-table th, .ranking-table td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid rgba(220, 20, 60, 0.3); /* Crimson border */
+    }
+    .ranking-table th {
+      background: rgba(139, 0, 0, 0.5); /* Dark red header */
+      font-weight: bold;
+      color: #FFD700; /* Gold text for contrast */
+    }
+    .ranking-table td {
+      color: #FFE4E1; /* Light pinkish text for readability */
+    }
+    .tab-button {
+      transition: background-color 0.3s, color 0.3s;
+      background: rgba(139, 0, 0, 0.7); /* Dark red */
+      color: #FFD700; /* Gold text */
+      border: 1px solid #DC143C; /* Crimson border */
+    }
+    .tab-button:hover {
+      background: #DC143C; /* Crimson on hover */
+    }
+    .tab-button.active {
+      background: #FFD700; /* Gold when active */
+      color: #8B0000; /* Dark red text */
+    }
+    h1 {
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+  </style>
 </head>
-<body>
-    <h1>Monthly Rankings</h1>
-    <div id="rankings-container"></div>
+<body class="flex items-center justify-center p-4">
+  <div class="container w-full max-w-4xl">
+    <h1 class="text-3xl font-bold text-yellow-400 text-center mb-6">Monthly Rankings</h1>
+    
+    <!-- Tabs -->
+    <div id="tabs" class="flex space-x-2 mb-4"></div>
 
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script>
-        async function fetchExcelData(url) {
-            try {
-                const response = await fetch(url);
-                const arrayBuffer = await response.arrayBuffer();
-                const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-                const firstSheetName = workbook.SheetNames[0];
-                const worksheet = workbook.Sheets[firstSheetName];
-                const jsonData = XLSX.utils.sheet_to_json(worksheet);
-                return jsonData;
-            } catch (error) {
-                console.error('Error fetching Excel data:', error);
-                return [];
-            }
-        }
+    <!-- Tab Content -->
+    <div id="tab-contents"></div>
+  </div>
 
-        async function displayRankings() {
-            const months = [
-                { name: 'April 2024', file: 'Rankings_April_2024.xlsx' },
-                { name: 'May 2024', file: 'Rankings_May_2024.xlsx' },
-                { name: 'June 2024', file: 'Rankings_June_2024.xlsx' },
-                { name: 'July 2024', file: 'Rankings_July_2024.xlsx' },
-                { name: 'August 2024', file: 'Rankings_August_2024.xlsx' },
-                { name: 'September 2024', file: 'Rankings_September_2024.xlsx' },
-                { name: 'October 2024', file: 'Rankings_October_2024.xlsx' },
-                { name: 'January 2025', file: 'Rankings_January_2025.xlsx' },
-                { name: 'February 2025', file: 'Rankings_February_2025.xlsx' },
-                { name: 'March 2025', file: 'Rankings_March_2025.xlsx' },
-                { name: 'April 2025', file: 'Rankings_April_2025.xlsx' }
-            ];
+  <script>
+    // List of months to check for Excel files (extendable)
+    const months = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    const year = '2025';
 
-            const container = document.getElementById('rankings-container');
+    // Function to generate tabs and content
+    function generateTabs() {
+      const tabsContainer = document.getElementById('tabs');
+      const contentsContainer = document.getElementById('tab-contents');
 
-            for (const month of months) {
-                const data = await fetchExcelData(month.file);
-                if (data.length === 0) {
-                    console.warn(`No data found for ${month.name}`);
-                    continue;
-                }
+      months.forEach((month, index) => {
+        const monthId = month.toLowerCase();
 
-                const section = document.createElement('div');
-                section.className = 'month-section';
-                section.innerHTML = `<h2>${month.name}</h2>`;
+        // Create tab button
+        const button = document.createElement('button');
+        button.className = `tab-button px-4 py-2 rounded-t-lg ${index === 0 ? 'active' : ''}`;
+        button.textContent = month;
+        button.onclick = () => showTab(monthId);
+        tabsContainer.appendChild(button);
 
-                const table = document.createElement('table');
-                const headerRow = document.createElement('tr');
-                const headers = ['Player', 'Placement', 'Total Points', 'Win Rate (%)', 'Per-Event Rankings', 'Events Entered'];
-                headers.forEach(header => {
-                    const th = document.createElement('th');
-                    th.textContent = header;
-                    headerRow.appendChild(th);
-                });
-                table.appendChild(headerRow);
+        // Create tab content
+        const contentDiv = document.createElement('div');
+        contentDiv.id = monthId;
+        contentDiv.className = `tab-content ${index === 0 ? 'active' : ''}`;
+        contentDiv.innerHTML = `
+          <table class="ranking-table w-full">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Name</th>
+                <th>Score</th>
+              </tr>
+            </thead>
+            <tbody id="${monthId}-table"></tbody>
+          </table>
+        `;
+        contentsContainer.appendChild(contentDiv);
 
-                data.forEach(row => {
-                    const tr = document.createElement('tr');
-                    headers.forEach(header => {
-                        const td = document.createElement('td');
-                        const key = header.replace(/ \(%\)/, '').replace(/-/g, ' ').toLowerCase();
-                        td.textContent = row[key] || '-';
-                        tr.appendChild(td);
-                    });
-                    table.appendChild(tr);
-                });
+        // Load Excel data for this month
+        loadExcelData(`./Rankings_${month}_${year}.xlsx`, `${monthId}-table`);
+      });
+    }
 
-                section.appendChild(table);
-                container.appendChild(section);
-            }
-        }
+    // Tab switching function
+    function showTab(monthId) {
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(monthId).classList.add('active');
+      document.querySelector(`button[onclick="showTab('${monthId}')"]`).classList.add('active');
+    }
 
-        document.addEventListener('DOMContentLoaded', displayRankings);
-    </script>
+    // Function to load and display Excel data
+    async function loadExcelData(file, tableId) {
+      try {
+        const response = await fetch(file);
+        const arrayBuffer = await response.arrayBuffer();
+        const workbook = XLSX.read(new Uint8Array(arrayBuffer), { type: 'array' });
+        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+        const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+
+        const tbody = document.getElementById(tableId);
+        tbody.innerHTML = '';
+        jsonData.forEach(row => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${row.Rank || ''}</td>
+            <td>${row.Name || ''}</td>
+            <td>${row.Score || ''}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (error) {
+        console.error(`Error loading ${file}:`, error);
+        document.getElementById(tableId).innerHTML = '<tr><td colspan="3" class="text-center text-red-300">Error loading data</td></tr>';
+      }
+    }
+
+    // Initialize tabs and load data
+    generateTabs();
+  </script>
 </body>
 </html>
