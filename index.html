@@ -123,7 +123,7 @@
   </div>
 
   <script>
-    // Hardcoded months and years (April 2024–October 2024, January 2025–April 2025)
+    // Hardcoded months and years (April 2024–October 2024, January 2025–April 2025, excluding November and December 2024)
     const months = [
       { month: 'April', year: '2024' },
       { month: 'May', year: '2024' },
@@ -163,8 +163,8 @@
             <thead>
               <tr>
                 <th>Rank</th>
-                <th>Name</th>
-                <th>Score</th>
+                <th>Player</th>
+                <th>Points</th>
               </tr>
             </thead>
             <tbody id="${monthId}-table"></tbody>
@@ -200,9 +200,9 @@
         jsonData.forEach(row => {
           const tr = document.createElement('tr');
           tr.innerHTML = `
-            <td>${row.Rank || ''}</td>
-            <td>${row.Name || ''}</td>
-            <td>${row.Score || ''}</td>
+            <td>${row.Placement || ''}</td>
+            <td>${row.Player || ''}</td>
+            <td>${row['Total Points'] || ''}</td>
           `;
           tbody.appendChild(tr);
         });
