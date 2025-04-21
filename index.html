@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ladder Abou Dojo</title>
+  <title>Monthly Ladder Abou Dojo</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- XLSX Library CDN -->
@@ -48,6 +48,7 @@
     }
     .ranking-table td {
       color: #FFE4E1; /* Light pinkish text for readability */
+      text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; /* Black outline for readability */
     }
     .tabs-container {
       position: relative;
@@ -149,15 +150,17 @@
 
         // Create tab button
         const button = document.createElement('button');
-        button.className = `tab-button ${index === 0 ? 'active' : ''}`;
+        // Set April 2025 as the default active tab (last item in the array)
+        button.className = `tab-button ${item.month === 'April' && item.year === '2025' ? 'active' : ''}`;
         button.textContent = displayName;
         button.onclick = () => showTab(monthId);
+        button.setAttribute('data-month-id', monthId); // For centering
         tabsContainer.appendChild(button);
 
         // Create tab content
         const contentDiv = document.createElement('div');
         contentDiv.id = monthId;
-        contentDiv.className = `tab-content ${index === 0 ? 'active' : ''}`;
+        contentDiv.className = `tab-content ${item.month === 'April' && item.year === '2025' ? 'active' : ''}`;
         contentDiv.innerHTML = `
           <table class="ranking-table w-full">
             <thead>
@@ -175,6 +178,9 @@
         // Load Excel data for this month
         loadExcelData(`./Rankings_${item.month}_${item.year}.xlsx`, `${monthId}-table`);
       });
+
+      // Center the April 2025 tab on page load
+      centerTab('april-2025');
     }
 
     // Tab switching function
@@ -216,6 +222,18 @@
     function scrollTabs(amount) {
       const tabs = document.getElementById('tabs');
       tabs.scrollLeft += amount;
+    }
+
+    // Center a specific tab on the screen
+    function centerTab(monthId) {
+      const tabsContainer = document.getElementById('tabs');
+      const targetTab = document.querySelector(`button[data-month-id="${monthId}"]`);
+      if (targetTab) {
+        const tabRect = targetTab.getBoundingClientRect();
+        const containerRect = tabsContainer.getBoundingClientRect();
+        const scrollPosition = targetTab.offsetLeft - (tabsContainer.offsetWidth / 2) + (tabRect.width / 2);
+        tabsContainer.scrollLeft = scrollPosition;
+      }
     }
 
     // Initialize tabs and load data
