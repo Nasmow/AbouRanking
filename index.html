@@ -8,8 +8,8 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- XLSX Library CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <!-- Google Fonts: Noto Sans JP and Zen Kurenaido -->
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Zen+Kurenaido&display=swap" rel="stylesheet">
+  <!-- Google Fonts: Noto Sans JP and Midorima -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Midorima&display=swap" rel="stylesheet">
   <style>
     body {
       background: url('./abou_dojo_poster.jpg') no-repeat center center fixed;
@@ -20,7 +20,7 @@
     .container {
       background: url('./ranking_background.jpg') no-repeat center center;
       background-size: cover;
-      background-color: rgba(255, 255, 255, 0.8); /* Slight white overlay for readability */
+      background-color: rgba(255, 255, 255, 0.85); /* Slightly more opaque white overlay for readability */
       border-radius: 10px;
       padding: 1.5rem;
       backdrop-filter: blur(5px);
@@ -35,7 +35,7 @@
     .ranking-table {
       background: url('./ranking_background.jpg') no-repeat center center;
       background-size: cover;
-      background-color: rgba(255, 255, 255, 0.8); /* Slight white overlay for readability */
+      background-color: rgba(255, 255, 255, 0.85); /* Slightly more opaque white overlay for readability */
       border-radius: 10px;
       overflow: hidden;
       border: 2px solid #DC143C; /* Crimson border */
@@ -51,12 +51,20 @@
       color: #ffffff; /* White text */
     }
     .ranking-table td {
-      color: #FFE4E1; /* Light pinkish text for readability */
-      text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; /* Black outline for readability */
+      color: #000000; /* Black text for better readability */
+      text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff; /* White outline for contrast */
     }
-    /* Larger font size for top 3 ranks */
-    .ranking-table tr.top-3 td {
-      font-size: 1.25rem; /* Larger font size for top 3 */
+    /* Font sizes for top 3 ranks */
+    .ranking-table tr.rank-1 td {
+      font-size: 1.5rem; /* Largest for 1st place */
+      font-weight: bold;
+    }
+    .ranking-table tr.rank-2 td {
+      font-size: 1.35rem; /* Slightly smaller for 2nd place */
+      font-weight: bold;
+    }
+    .ranking-table tr.rank-3 td {
+      font-size: 1.2rem; /* Smallest of the top 3 for 3rd place */
       font-weight: bold;
     }
     .tabs-container {
@@ -74,7 +82,7 @@
       display: none; /* Hide scrollbar in Chrome/Safari */
     }
     .tab-button {
-      transition: background-color 0.3s, color 0.3s;
+      transition: background-color 0.3s, color 0.3s, transform 0.3s;
       background: rgba(139, 0, 0, 0.7); /* Dark red */
       color: #ffffff; /* White text */
       border: 1px solid #DC143C; /* Crimson border */
@@ -82,6 +90,7 @@
       flex: 0 0 auto;
       padding: 0.5rem 1rem;
       white-space: nowrap;
+      font-size: 1rem; /* Default font size for tabs */
     }
     .tab-button:hover {
       background: #DC143C; /* Crimson on hover */
@@ -90,6 +99,8 @@
       background: #ffffff; /* White when active */
       color: #8B0000; /* Dark red text */
       text-shadow: none; /* Remove outline when active */
+      transform: scale(1.2); /* Make active tab larger */
+      font-size: 1.2rem; /* Larger font size for active tab */
     }
     .scroll-arrow {
       position: absolute;
@@ -113,7 +124,7 @@
       background: #DC143C;
     }
     h1 {
-      font-family: 'Zen Kurenaido', sans-serif; /* Brush-style font */
+      font-family: 'Midorima', sans-serif; /* Brush-style font */
       color: #B22222; /* Red color to match the image */
       text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; /* Black outline */
     }
@@ -179,6 +190,7 @@
                 <th>Rank</th>
                 <th>Player</th>
                 <th>Points</th>
+                <th>Per-Event Rankings</th>
               </tr>
             </thead>
             <tbody id="${monthId}-table"></tbody>
@@ -200,6 +212,8 @@
       document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
       document.getElementById(monthId).classList.add('active');
       document.querySelector(`button[onclick="showTab('${monthId}')"]`).classList.add('active');
+      // Re-center the active tab when clicked
+      centerTab(monthId);
     }
 
     // Function to load and display Excel data
@@ -216,19 +230,25 @@
         tbody.innerHTML = '';
         jsonData.forEach(row => {
           const tr = document.createElement('tr');
-          // Add top-3 class if rank (Placement) is 1, 2, or 3
-          const isTop3 = row.Placement === 1 || row.Placement === 2 || row.Placement === 3;
-          tr.className = isTop3 ? 'top-3' : '';
+          // Add rank-specific class for 1st, 2nd, 3rd
+          if (row.Placement === 1) {
+            tr.className = 'rank-1';
+          } else if (row.Placement === 2) {
+            tr.className = 'rank-2';
+          } else if (row.Placement === 3) {
+            tr.className = 'rank-3';
+          }
           tr.innerHTML = `
             <td>${row.Placement || ''}</td>
             <td>${row.Player || ''}</td>
             <td>${row['Total Points'] || ''}</td>
+            <td>${row['Per-Event Rankings'] || ''}</td>
           `;
           tbody.appendChild(tr);
         });
       } catch (error) {
         console.error(`Error loading ${file}:`, error);
-        document.getElementById(tableId).innerHTML = '<tr><td colspan="3" class="text-center text-red-300">Error loading data</td></tr>';
+        document.getElementById(tableId).innerHTML = '<tr><td colspan="4" class="text-center text-red-300">Error loading data</td></tr>';
       }
     }
 
