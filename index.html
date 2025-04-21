@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Monthly Rankings</title>
+  <title>Classement mensuel Abou Dojo</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- XLSX Library CDN -->
@@ -21,6 +21,7 @@
       border-radius: 10px;
       padding: 1.5rem;
       backdrop-filter: blur(5px);
+      position: relative;
     }
     .tab-content {
       display: none;
@@ -43,60 +44,115 @@
     .ranking-table th {
       background: rgba(139, 0, 0, 0.5); /* Dark red header */
       font-weight: bold;
-      color: #FFD700; /* Gold text for contrast */
+      color: #ffffff; /* White text */
     }
     .ranking-table td {
       color: #FFE4E1; /* Light pinkish text for readability */
     }
+    .tabs-container {
+      position: relative;
+      max-width: 100%;
+      overflow: hidden;
+    }
+    .tabs-scroll {
+      display: flex;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      scrollbar-width: none; /* Hide scrollbar in Firefox */
+    }
+    .tabs-scroll::-webkit-scrollbar {
+      display: none; /* Hide scrollbar in Chrome/Safari */
+    }
     .tab-button {
       transition: background-color 0.3s, color 0.3s;
       background: rgba(139, 0, 0, 0.7); /* Dark red */
-      color: #FFD700; /* Gold text */
+      color: #ffffff; /* White text */
       border: 1px solid #DC143C; /* Crimson border */
+      text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; /* Black outline */
+      flex: 0 0 auto;
+      padding: 0.5rem 1rem;
+      white-space: nowrap;
     }
     .tab-button:hover {
       background: #DC143C; /* Crimson on hover */
     }
     .tab-button.active {
-      background: #FFD700; /* Gold when active */
+      background: #ffffff; /* White when active */
       color: #8B0000; /* Dark red text */
+      text-shadow: none; /* Remove outline when active */
+    }
+    .scroll-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(139, 0, 0, 0.7);
+      color: #ffffff;
+      padding: 0.5rem;
+      cursor: pointer;
+      z-index: 10;
+      border-radius: 50%;
+      border: 1px solid #DC143C;
+    }
+    .scroll-arrow.left {
+      left: 0;
+    }
+    .scroll-arrow.right {
+      right: 0;
+    }
+    .scroll-arrow:hover {
+      background: #DC143C;
     }
     h1 {
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; /* Black outline */
     }
   </style>
 </head>
 <body class="flex items-center justify-center p-4">
   <div class="container w-full max-w-4xl">
-    <h1 class="text-3xl font-bold text-yellow-400 text-center mb-6">Monthly Rankings</h1>
+    <h1 class="text-3xl font-bold text-white text-center mb-6">Classement mensuel Abou Dojo</h1>
     
     <!-- Tabs -->
-    <div id="tabs" class="flex space-x-2 mb-4"></div>
+    <div class="tabs-container">
+      <div class="scroll-arrow left" onclick="scrollTabs(-100)">&#9664;</div>
+      <div id="tabs" class="tabs-scroll"></div>
+      <div class="scroll-arrow right" onclick="scrollTabs(100)">&#9654;</div>
+    </div>
 
     <!-- Tab Content -->
     <div id="tab-contents"></div>
   </div>
 
   <script>
-    // List of months to check for Excel files (extendable)
+    // Define months and years (April 2024 to April 2025)
     const months = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
+      { month: 'April', year: '2024' },
+      { month: 'May', year: '2024' },
+      { month: 'June', year: '2024' },
+      { month: 'July', year: '2024' },
+      { month: 'August', year: '2024' },
+      { month: 'September', year: '2024' },
+      { month: 'October', year: '2024' },
+      { month: 'November', year: '2024' },
+      { month: 'December', year: '2024' },
+      { month: 'January', year: '2025' },
+      { month: 'February', year: '2025' },
+      { month: 'March', year: '2025' },
+      { month: 'April', year: '2025' }
     ];
-    const year = '2025';
 
     // Function to generate tabs and content
     function generateTabs() {
       const tabsContainer = document.getElementById('tabs');
       const contentsContainer = document.getElementById('tab-contents');
 
-      months.forEach((month, index) => {
-        const monthId = month.toLowerCase();
+      months.forEach((item, index) => {
+        const monthId = `${item.month.toLowerCase()}-${item.year}`;
+        const displayName = `${item.month} ${item.year}`;
 
         // Create tab button
         const button = document.createElement('button');
-        button.className = `tab-button px-4 py-2 rounded-t-lg ${index === 0 ? 'active' : ''}`;
-        button.textContent = month;
+        button.className = `tab-button ${index === 0 ? 'active' : ''}`;
+        button.textContent = displayName;
         button.onclick = () => showTab(monthId);
         tabsContainer.appendChild(button);
 
@@ -119,7 +175,7 @@
         contentsContainer.appendChild(contentDiv);
 
         // Load Excel data for this month
-        loadExcelData(`./Rankings_${month}_${year}.xlsx`, `${monthId}-table`);
+        loadExcelData(`./Rankings_${item.month}_${item.year}.xlsx`, `${monthId}-table`);
       });
     }
 
@@ -135,6 +191,7 @@
     async function loadExcelData(file, tableId) {
       try {
         const response = await fetch(file);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const arrayBuffer = await response.arrayBuffer();
         const workbook = XLSX.read(new Uint8Array(arrayBuffer), { type: 'array' });
         const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
@@ -155,6 +212,12 @@
         console.error(`Error loading ${file}:`, error);
         document.getElementById(tableId).innerHTML = '<tr><td colspan="3" class="text-center text-red-300">Error loading data</td></tr>';
       }
+    }
+
+    // Scroll tabs function
+    function scrollTabs(amount) {
+      const tabs = document.getElementById('tabs');
+      tabs.scrollLeft += amount;
     }
 
     // Initialize tabs and load data
