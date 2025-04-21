@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Monthly Ladder Abou Dojo</title>
+  <title>Classement mensuel Abou Dojo</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- XLSX Library CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <!-- Google Fonts: Noto Sans JP and Midorima -->
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Midorima&display=swap" rel="stylesheet">
+  <!-- Google Fonts: Noto Sans JP and Zen Kurenaido -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Zen+Kurenaido&display=swap" rel="stylesheet">
   <style>
     body {
       background: url('./abou_dojo_poster.jpg') no-repeat center center fixed;
@@ -48,10 +48,10 @@
     .ranking-table th {
       background: rgba(139, 0, 0, 0.5); /* Dark red header */
       font-weight: bold;
-      color: #ffffff; /* White text */
+      color: #6B4E31; /* Brown text */
     }
     .ranking-table td {
-      color: #000000; /* Black text for better readability */
+      color: #6B4E31; /* Brown text for better readability */
       text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff; /* White outline for contrast */
     }
     /* Font sizes for top 3 ranks */
@@ -84,9 +84,9 @@
     .tab-button {
       transition: background-color 0.3s, color 0.3s, transform 0.3s;
       background: rgba(139, 0, 0, 0.7); /* Dark red */
-      color: #ffffff; /* White text */
+      color: #6B4E31; /* Brown text */
       border: 1px solid #DC143C; /* Crimson border */
-      text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; /* Black outline */
+      text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff; /* White outline */
       flex: 0 0 auto;
       padding: 0.5rem 1rem;
       white-space: nowrap;
@@ -97,7 +97,7 @@
     }
     .tab-button.active {
       background: #ffffff; /* White when active */
-      color: #8B0000; /* Dark red text */
+      color: #6B4E31; /* Brown text */
       text-shadow: none; /* Remove outline when active */
       transform: scale(1.2); /* Make active tab larger */
       font-size: 1.2rem; /* Larger font size for active tab */
@@ -107,7 +107,7 @@
       top: 50%;
       transform: translateY(-50%);
       background: rgba(139, 0, 0, 0.7);
-      color: #ffffff;
+      color: #6B4E31; /* Brown text */
       padding: 0.5rem;
       cursor: pointer;
       z-index: 10;
@@ -124,9 +124,9 @@
       background: #DC143C;
     }
     h1 {
-      font-family: 'Midorima', sans-serif; /* Brush-style font */
-      color: #B22222; /* Red color to match the image */
-      text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; /* Black outline */
+      font-family: 'Zen Kurenaido', sans-serif; /* Brush-style font as fallback */
+      color: #6B4E31; /* Brown color to match the background */
+      text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff; /* White outline */
     }
   </style>
 </head>
@@ -202,8 +202,8 @@
         loadExcelData(`./Rankings_${item.month}_${item.year}.xlsx`, `${monthId}-table`);
       });
 
-      // Center the April 2025 tab on page load
-      centerTab('april-2025');
+      // Center the April 2025 tab after a slight delay to ensure DOM is rendered
+      setTimeout(() => centerTab('april-2025'), 100);
     }
 
     // Tab switching function
@@ -213,7 +213,7 @@
       document.getElementById(monthId).classList.add('active');
       document.querySelector(`button[onclick="showTab('${monthId}')"]`).classList.add('active');
       // Re-center the active tab when clicked
-      centerTab(monthId);
+      setTimeout(() => centerTab(monthId), 100);
     }
 
     // Function to load and display Excel data
@@ -248,7 +248,7 @@
         });
       } catch (error) {
         console.error(`Error loading ${file}:`, error);
-        document.getElementById(tableId).innerHTML = '<tr><td colspan="4" class="text-center text-red-300">Error loading data</td></tr>';
+        document.getElementById(tableId).innerHTML = '<tr><td colspan="4" class="text-center">Error loading data</td></tr>';
       }
     }
 
@@ -265,13 +265,16 @@
       if (targetTab) {
         const tabRect = targetTab.getBoundingClientRect();
         const containerRect = tabsContainer.getBoundingClientRect();
+        // Adjust scroll position to account for the active tab's larger size
         const scrollPosition = targetTab.offsetLeft - (tabsContainer.offsetWidth / 2) + (tabRect.width / 2);
         tabsContainer.scrollLeft = scrollPosition;
       }
     }
 
     // Initialize tabs and load data
-    generateTabs();
+    window.onload = function() {
+      generateTabs();
+    };
   </script>
 </body>
 </html>
