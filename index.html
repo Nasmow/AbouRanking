@@ -24,8 +24,8 @@
       font-style: normal;
     }
     @font-face {
-      font-family: 'Movie Font';
-      src: url('./Movie Font.ttf') format('truetype');
+      font-family: 'Black Matcha';
+      src: url('./BlackMatcha.otf') format('opentype');
       font-weight: normal;
       font-style: normal;
     }
@@ -81,9 +81,9 @@
       line-height: 1.5; /* Larger line height for vertical centering */
       border-bottom: 2px solid rgba(220, 20, 60, 0.3); /* Thicker red outline for header */
     }
-    /* Use Movie Font for table data */
+    /* Use Black Matcha for table data */
     .ranking-table td {
-      font-family: 'Movie Font', sans-serif;
+      font-family: 'Black Matcha', sans-serif;
       font-size: 2rem; /* Same size as 1st place for all ranks */
       font-weight: bold; /* Match Rank 1 settings */
       line-height: 1.1; /* Match Rank 1 settings */
@@ -155,7 +155,7 @@
     }
     .tab-button {
       transition: background-color 0.3s, color 0.3s, transform 0.3s, font-size 0.3s;
-      background: transparent; /* Remove background */
+      background: rgba(139, 0, 0, 0.7); /* Restore red background */
       color: #6B4E31; /* Brown text */
       border: 1px solid #DC143C; /* Crimson border */
       text-shadow: -0.5px -0.5px 0 #fff, 0.5px -0.5px 0 #fff, -0.5px 0.5px 0 #fff, 0.5px 0.5px 0 #fff; /* Reduced white outline */
@@ -171,7 +171,7 @@
       transform: scale(1.1); /* Slightly increase size on hover */
     }
     .tab-button.active {
-      background: transparent; /* Remove background */
+      background: rgba(139, 0, 0, 0.7); /* Restore red background */
       color: #6B4E31; /* Brown text */
       text-shadow: -0.5px -0.5px 0 #fff, 0.5px -0.5px 0 #fff, -0.5px 0.5px 0 #fff, 0.5px 0.5px 0 #fff; /* Keep outline */
       transform: scale(1.3); /* Larger size for active tab */
@@ -208,7 +208,7 @@
       font-family: 'Onsen Japan', sans-serif; /* Use locally loaded font */
       color: #6B4E31; /* Brown color to match the background */
       text-shadow: -0.5px -0.5px 0 #fff, 0.5px -0.5px 0 #fff, -0.5px 0.5px 0 #fff, 0.5px 0.5px 0 #fff; /* Reduced white outline */
-      margin-bottom: 3rem; /* Increased space between title and month tabs */
+      margin-bottom: 6.5rem; /* Increased space to match month box height + existing margin */
       letter-spacing: 0.1em; /* Add space between letters */
     }
     .watermark {
@@ -254,6 +254,8 @@
       <div class="language-toggle">
         <button class="language-button active" onclick="switchLanguage('fr')">FR</button>
         <button class="language-button" onclick="switchLanguage('en')">EN</button>
+        <button class="language-button" onclick="switchLanguage('ja')">JA</button>
+        <button class="language-button" onclick="switchLanguage('zh')">ZH</button>
       </div>
 
       <h1 id="title" class="text-4xl font-bold text-center">Classement Mensuel Abou Dojo</h1>
@@ -319,6 +321,48 @@
           October: "Octobre",
           November: "Novembre",
           December: "Decembre"
+        }
+      },
+      ja: {
+        title: "阿部道場月間ランキング",
+        rank: "順位",
+        player: "選手",
+        points: "ポイント",
+        placements: "順位詳細",
+        months: {
+          January: "1月",
+          February: "2月",
+          March: "3月",
+          April: "4月",
+          May: "5月",
+          June: "6月",
+          July: "7月",
+          August: "8月",
+          September: "9月",
+          October: "10月",
+          November: "11月",
+          December: "12月"
+        }
+      },
+      zh: {
+        title: "阿部道场月度排名",
+        rank: "排名",
+        player: "选手",
+        points: "积分",
+        placements: "详细排名",
+        months: {
+          January: "一月",
+          February: "二月",
+          March: "三月",
+          April: "四月",
+          May: "五月",
+          June: "六月",
+          July: "七月",
+          August: "八月",
+          September: "九月",
+          October: "十月",
+          November: "十一月",
+          December: "十二月"
         }
       }
     };
@@ -469,7 +513,7 @@
         });
       } catch (error) {
         console.error(`Error loading ${file}:`, error);
-        document.getElementById(tableId).innerHTML = `<tr><td colspan="4" class="text-center">${currentLanguage === 'fr' ? 'Erreur de chargement des données' : 'Error loading data'}</td></tr>`;
+        document.getElementById(tableId).innerHTML = `<tr><td colspan="4" class="text-center">${currentLanguage === 'fr' ? 'Erreur de chargement des données' : translations[currentLanguage].error || 'Error loading data'}</td></tr>`;
       }
     }
 
