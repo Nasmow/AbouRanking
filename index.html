@@ -34,7 +34,7 @@
       background: url('https://nasmow.github.io/Ranking/ranking_background2.jpg') no-repeat top center;
       background-size: 100% auto; /* Ensure red paint and dried leaf are visible */
       background-repeat: repeat-y; /* Repeat downward */
-      background-color: rgba(255, 255, 255, 0.9); /* Fallback if image doesn't load */
+      background-color: transparent; /* Remove white fallback */
       border-radius: 10px;
       padding: 1.5rem;
       backdrop-filter: blur(5px);
@@ -50,7 +50,7 @@
       background: url('https://nasmow.github.io/Ranking/ranking_background2.jpg') no-repeat top center;
       background-size: 100% auto; /* Ensure red paint and dried leaf are visible */
       background-repeat: repeat-y; /* Repeat downward */
-      background-color: transparent; /* Transparent if image doesn't load */
+      background-color: transparent; /* Ensure transparency if image fails */
       border-radius: 10px;
       overflow: hidden;
       border: 2px solid #DC143C; /* Crimson border */
@@ -181,11 +181,40 @@
       font-family: 'Niagato', sans-serif;
       text-shadow: -0.5px -0.5px 0 #fff, 0.5px -0.5px 0 #fff, -0.5px 0.5px 0 #fff, 0.5px 0.5px 0 #fff; /* Smaller white outline */
     }
+    .language-toggle {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 1000;
+    }
+    .language-button {
+      background: rgba(139, 0, 0, 0.7);
+      color: #6B4E31;
+      border: 1px solid #DC143C;
+      padding: 0.3rem 0.6rem;
+      cursor: pointer;
+      font-family: 'Noto Sans JP', sans-serif;
+      text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
+    }
+    .language-button:hover {
+      background: #DC143C;
+    }
+    .language-button.active {
+      background: #ffffff;
+      color: #6B4E31;
+      text-shadow: none;
+    }
   </style>
 </head>
 <body class="flex items-center justify-center p-4">
   <div class="container w-full max-w-4xl">
-    <h1 class="text-3xl font-bold text-center mb-2">Monthly Ladder Abou Dojo</h1>
+    <!-- Language Toggle -->
+    <div class="language-toggle">
+      <button class="language-button active" onclick="switchLanguage('fr')">FR</button>
+      <button class="language-button" onclick="switchLanguage('en')">EN</button>
+    </div>
+
+    <h1 id="title" class="text-3xl font-bold text-center mb-2">Classement Mensuel Abou Dojo</h1>
     
     <!-- Tabs -->
     <div class="tabs-container">
@@ -203,6 +232,64 @@
   <div class="watermark">By Nasmo</div>
 
   <script>
+    // Language translations
+    const translations = {
+      en: {
+        title: "Monthly Ladder Abou Dojo",
+        rank: "Rank",
+        player: "Player",
+        points: "Points",
+        placements: "Placements"
+      },
+      fr: {
+        title: "Classement Mensuel Abou Dojo",
+        rank: "Rang",
+        player: "Joueur",
+        points: "Points",
+        placements: "Classements"
+      }
+    };
+
+    let currentLanguage = 'fr'; // Default to French
+
+    // Function to switch language
+    function switchLanguage(lang) {
+      currentLanguage = lang;
+      // Update title
+      document.getElementById('title').textContent = translations[lang].title;
+      // Update language buttons
+      document.querySelectorAll('.language-button').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.textContent.toLowerCase() === lang) {
+          btn.classList.add('active');
+        }
+      });
+      // Regenerate tabs to update table headers
+      generateTabs();
+      // Reload tab content with updated headers
+      months.forEach((item) => {
+        const monthId = `${item.month.toLowerCase()}-${item.year}`;
+        const contentDiv = document.getElementById(monthId);
+        if (contentDiv) {
+          contentDiv.innerHTML = `
+            <table class="ranking-table w-full">
+              <thead>
+                <tr>
+                  <th>${translations[lang].rank}</th>
+                  <th>${translations[lang].player}</th>
+                  <th>${translations[lang].points}</th>
+                  <th>${translations[lang].placements}</th>
+                </tr>
+              </thead>
+              <tbody id="${monthId}-table"></tbody>
+            </table>
+          `;
+          // Reload Excel data for this month
+          loadExcelData(`./Rankings_${item.month}_${item.year}.xlsx`, `${monthId}-table`);
+        }
+      });
+    }
+
     // Hardcoded months and years (April 2024–October 2024, January 2025–April 2025, excluding November and December 2024)
     const months = [
       { month: 'April', year: '2024' },
@@ -223,6 +310,9 @@
       const tabsContainer = document.getElementById('tabs');
       const yearDisplay = document.getElementById('year-display');
       const contentsContainer = document.getElementById('tab-contents');
+
+      // Clear existing tabs
+      tabsContainer.innerHTML = '';
 
       // Group months by year
       const years = [...new Set(months.map(item => item.year))];
@@ -305,7 +395,7 @@
         });
       } catch (error) {
         console.error(`Error loading ${file}:`, error);
-        document.getElementById(tableId).innerHTML = '<tr><td colspan="4" class="text-center">Error loading data</td></tr>';
+        document.getElementById(tableId).innerHTML = `<tr><td colspan="4" class="text-center">${currentLanguage === 'fr' ? 'Erreur de chargement des données' : 'Error loading data'}</td></tr>`;
       }
     }
 
@@ -369,10 +459,10 @@
           <table class="ranking-table w-full">
             <thead>
               <tr>
-                <th>Rank</th>
-                <th>Player</th>
-                <th>Points</th>
-                <th>Placements</th>
+                <th>${translations[currentLanguage].rank}</th>
+                <th>${translations[currentLanguage].player}</th>
+                <th>${translations[currentLanguage].points}</th>
+                <th>${translations[currentLanguage].placements}</th>
               </tr>
             </thead>
             <tbody id="${monthId}-table"></tbody>
