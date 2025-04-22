@@ -124,10 +124,9 @@
       display: flex;
       transition: transform 0.3s ease;
       height: 100%;
-      width: 100%;
     }
     .tab-button {
-      flex: 1 1 150px;
+      flex: 0 0 150px; /* Fixed width for tabs */
       height: 100%;
       display: flex;
       align-items: center;
@@ -248,7 +247,7 @@
     .points-panel {
       position: absolute;
       top: 10px;
-      right: -150px; /* Increased offset to move panel outside */
+      right: -244px; /* Adjusted to position left border 50px from title's right edge */
       background: transparent;
       border: 1px solid #DC143C;
       border-radius: 5px;
@@ -529,8 +528,8 @@
     // Function to update the position of the tabs
     function updateTabPosition() {
       const tabsTrack = document.getElementById('tabs-track');
+      const tabWidth = 150; // Fixed tab width
       const containerWidth = 800;
-      const tabWidth = containerWidth / months.length; // Actual tab width based on container
       const totalWidth = months.length * tabWidth;
       const maxOffset = containerWidth - totalWidth;
 
