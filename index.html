@@ -119,14 +119,16 @@
       overflow: hidden;
       margin-bottom: 2rem;
       margin-top: 2rem;
+      box-sizing: border-box; /* Ensure padding doesn't affect width */
     }
     .tabs-track {
       display: flex;
       transition: transform 0.3s ease;
       height: 100%;
+      box-sizing: border-box; /* Ensure padding doesn't affect width */
     }
     .tab-button {
-      flex: 0 0 150px; /* Fixed width for tabs */
+      flex: 0 0 150px;
       height: 100%;
       display: flex;
       align-items: center;
@@ -247,7 +249,7 @@
     .points-panel {
       position: absolute;
       top: 10px;
-      right: -244px; /* Adjusted to position left border 50px from title's right edge */
+      right: -106px; /* Adjusted to align right edge with container's right edge */
       background: transparent;
       border: 1px solid #DC143C;
       border-radius: 5px;
@@ -302,7 +304,7 @@
         </table>
       </div>
 
-      <h1 id="title" class="text-4xl font-bold text-center">Classement Abou Dojo</h1>
+      <h1 id="title" class="text-4xl font-bold text-center">Classement Mensuel Abou Dojo</h1>
 
       <!-- Tabs Container -->
       <div class="tabs-container">
@@ -528,7 +530,7 @@
     // Function to update the position of the tabs
     function updateTabPosition() {
       const tabsTrack = document.getElementById('tabs-track');
-      const tabWidth = 150; // Fixed tab width
+      const tabWidth = 150;
       const containerWidth = 800;
       const totalWidth = months.length * tabWidth;
       const maxOffset = containerWidth - totalWidth;
