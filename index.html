@@ -90,16 +90,19 @@
     }
     /* Set specific widths for columns to ensure symmetry */
     .ranking-table th:nth-child(1), .ranking-table td:nth-child(1) { /* Rank */
-      width: 15%;
+      width: 12%; /* Reduced to accommodate new column */
     }
     .ranking-table th:nth-child(2), .ranking-table td:nth-child(2) { /* Player */
-      width: 40%;
+      width: 30%; /* Reduced to accommodate new column */
     }
     .ranking-table th:nth-child(3), .ranking-table td:nth-child(3) { /* Points */
-      width: 20%;
+      width: 15%; /* Reduced to accommodate new column */
     }
     .ranking-table th:nth-child(4), .ranking-table td:nth-child(4) { /* Placements */
-      width: 25%;
+      width: 18%; /* Reduced to accommodate new column */
+    }
+    .ranking-table th:nth-child(5), .ranking-table td:nth-child(5) { /* Win Rate */
+      width: 25%; /* New column */
     }
     /* Font sizes for top ranks */
     .ranking-table tr.rank-1 td {
@@ -290,6 +293,7 @@
         player: "Player",
         points: "Points",
         placements: "Placements",
+        winRate: "% win (w/l)",
         months: {
           January: "January",
           February: "February",
@@ -311,6 +315,7 @@
         player: "Joueur",
         points: "Points",
         placements: "Classements",
+        winRate: "% victoire (V/D)",
         months: {
           January: "Janvier",
           February: "Fevrier",
@@ -332,6 +337,7 @@
         player: "選手",
         points: "ポイント",
         placements: "順位詳細",
+        winRate: "勝率%(勝利/敗北)",
         months: {
           January: "1月",
           February: "2月",
@@ -353,6 +359,7 @@
         player: "选手",
         points: "积分",
         placements: "详细排名",
+        winRate: "胜率%(胜/负)",
         months: {
           January: "一月",
           February: "二月",
@@ -400,13 +407,14 @@
                   <th>${translations[lang].player}</th>
                   <th>${translations[lang].points}</th>
                   <th>${translations[lang].placements}</th>
+                  <th>${translations[lang].winRate}</th>
                 </tr>
               </thead>
               <tbody id="${monthId}-table"></tbody>
             </table>
           `;
           // Reload Excel data for this month
-          loadExcelData(`./Rankings_${item.month}_${item.year}.xlsx`, `${monthId}-table`);
+          loadExcelData(`./Rankings_${item.month}_${item.year}.xlsx`, `${monthId}-table`, item.year);
         }
       });
     }
@@ -488,7 +496,7 @@
     }
 
     // Function to load and display Excel data
-    async function loadExcelData(file, tableId) {
+    async function loadExcelData(file, tableId, year) {
       try {
         const response = await fetch(file);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -511,17 +519,26 @@
           }
           // Parse and format the "Per-Event Rankings" (e.g., "2/7/A/A" to "2-7-A-A")
           let placements = (row['Per-Event Rankings'] || '').split('/').map(item => item.trim() === '-' ? 'A' : item).join('-');
+          // Calculate win rate for 2025 data
+          let winRateDisplay = 'N/A';
+          if (year === '2025') {
+            const winRate = row['Win Rate'] || 0;
+            const wins = row['Wins'] || 0;
+            const losses = row['Losses'] || 0;
+            winRateDisplay = `${Math.round(winRate)}%(${wins}/${losses})`;
+          }
           tr.innerHTML = `
             <td>${row.Placement || ''}</td>
             <td>${row.Player || ''}</td>
             <td>${row['Total Points'] || ''}</td>
             <td>${placements}</td>
+            <td>${winRateDisplay}</td>
           `;
           tbody.appendChild(tr);
         });
       } catch (error) {
         console.error(`Error loading ${file}:`, error);
-        document.getElementById(tableId).innerHTML = `<tr><td colspan="4" class="text-center">${currentLanguage === 'fr' ? 'Erreur de chargement des données' : translations[currentLanguage].error || 'Error loading data'}</td></tr>`;
+        document.getElementById(tableId).innerHTML = `<tr><td colspan="5" class="text-center">${currentLanguage === 'fr' ? 'Erreur de chargement des données' : translations[currentLanguage].error || 'Error loading data'}</td></tr>`;
       }
     }
 
@@ -591,6 +608,7 @@
                 <th>${translations[currentLanguage].player}</th>
                 <th>${translations[currentLanguage].points}</th>
                 <th>${translations[currentLanguage].placements}</th>
+                <th>${translations[currentLanguage].winRate}</th>
               </tr>
             </thead>
             <tbody id="${monthId}-table"></tbody>
@@ -599,7 +617,7 @@
         document.getElementById('tab-contents').appendChild(contentDiv);
 
         // Load Excel data for this month
-        loadExcelData(`./Rankings_${item.month}_${item.year}.xlsx`, `${monthId}-table`);
+        loadExcelData(`./Rankings_${item.month}_${item.year}.xlsx`, `${monthId}-table`, item.year);
       });
     };
   </script>
