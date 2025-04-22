@@ -108,24 +108,24 @@
       justify-content: center;
       position: relative;
       width: 100%;
-      max-width: 880px; /* Container (800px) + arrow offsets */
+      max-width: 880px;
       margin: 0 auto;
     }
     .tabs-container {
       position: relative;
       width: 100%;
-      max-width: 800px; /* Match container width */
-      height: 50px; /* Fixed height for tabs */
-      overflow: hidden; /* Hide overflow for sliding effect */
+      max-width: 800px;
+      height: 50px;
+      overflow: hidden;
       margin-bottom: 2rem;
     }
     .tabs-track {
       display: flex;
-      transition: transform 0.3s ease; /* Smooth sliding effect */
+      transition: transform 0.3s ease;
       height: 100%;
     }
     .tab-button {
-      flex: 0 0 150px; /* Fixed width for each tab */
+      flex: 0 0 150px;
       height: 100%;
       display: flex;
       align-items: center;
@@ -174,10 +174,10 @@
       line-height: 1;
     }
     .scroll-arrow.left {
-      left: -40px; /* Touching the container's left border */
+      left: -40px;
     }
     .scroll-arrow.right {
-      right: -40px; /* Touching the container's right border */
+      right: -40px;
     }
     .scroll-arrow:hover {
       background: #DC143C;
@@ -189,11 +189,11 @@
       font-size: 0.6rem;
       text-align: center;
       position: absolute;
-      top: -1.5rem; /* Above the tabs */
+      top: -1rem; /* Adjusted to be just above the tabs */
       left: 50%;
       transform: translateX(-50%);
       width: 100%;
-      z-index: 100; /* Ensure it’s above everything */
+      z-index: 100;
     }
     h1 {
       font-family: 'Onsen Japan', sans-serif;
@@ -304,11 +304,9 @@
 
       <h1 id="title" class="text-4xl font-bold text-center">Classement Mensuel Abou Dojo</h1>
 
-      <!-- Year Display (Moved outside tabs-container) -->
-      <div id="year-display" class="year-display">2025</div>
-
       <!-- Tabs Container -->
       <div class="tabs-container">
+        <div id="year-display" class="year-display">2025</div>
         <div class="scroll-arrow left" onclick="scrollTabs(-1)">◀</div>
         <div id="tabs-track" class="tabs-track"></div>
         <div class="scroll-arrow right" onclick="scrollTabs(1)">▶</div>
@@ -428,7 +426,7 @@
     };
 
     let currentLanguage = 'fr';
-    let currentIndex = 0; // Track the current position of the tabs
+    let currentIndex = 0;
 
     // Hardcoded months and years
     const months = [
@@ -457,20 +455,8 @@
       });
       document.getElementById('points-ranking-header').textContent = translations[lang].ranking;
       document.getElementById('points-points-header').textContent = translations[lang].pointsLabel;
-      document.getElementById('points-absent').textContent = translations[lang].* Update language buttons
-      document.querySelectorAll('.language-button').forEach(btn => {
-        btn.classList.remove('active');
-        if (btn.getAttribute('onclick') === `switchLanguage('${lang}')`) {
-          btn.classList.add('active');
-        }
-      });
-      // Update points panel headers and labels
-      document.getElementById('points-ranking-header').textContent = translations[lang].ranking;
-      document.getElementById('points-points-header').textContent = translations[lang].pointsLabel;
       document.getElementById('points-absent').textContent = translations[lang].absent;
-      // Regenerate tabs to update table headers and month names
       generateTabs();
-      // Reload tab content with updated headers
       months.forEach((item) => {
         const monthId = `${item.month.toLowerCase()}-${item.year}`;
         const contentDiv = document.getElementById(monthId);
@@ -528,7 +514,6 @@
       document.getElementById(monthId).className = 'tab-content active';
       document.querySelector(`button[onclick="showTab('${monthId}')"]`).className = `tab-button active${currentLanguage === 'ja' ? ' ja' : ''}`;
 
-      // Update currentIndex to the selected tab
       currentIndex = months.findIndex(item => `${item.month.toLowerCase()}-${item.year}` === monthId);
       updateTabPosition();
     }
@@ -543,10 +528,17 @@
     // Function to update the position of the tabs
     function updateTabPosition() {
       const tabsTrack = document.getElementById('tabs-track');
-      const tabWidth = 150; // Fixed width of each tab
-      const containerWidth = 800; // Container width
-      const visibleTabs = Math.floor(containerWidth / tabWidth); // Number of fully visible tabs
-      const offset = -currentIndex * tabWidth + (containerWidth - visibleTabs * tabWidth) / 2;
+      const tabWidth = 150;
+      const containerWidth = 800;
+      const totalWidth = months.length * tabWidth;
+      const maxOffset = containerWidth - totalWidth; // Maximum negative offset
+
+      // Center the current tab
+      let offset = -currentIndex * tabWidth + containerWidth / 2 - tabWidth / 2;
+
+      // Ensure the offset doesn't push the tabs too far left or right
+      offset = Math.min(0, Math.max(maxOffset, offset));
+
       tabsTrack.style.transform = `translateX(${offset}px)`;
       positionYearDisplay();
     }
