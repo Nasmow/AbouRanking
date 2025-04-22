@@ -125,18 +125,19 @@
       justify-content: center;
       position: relative;
       width: 100%;
-      max-width: 1040px; /* Ensure enough space for arrows */
+      max-width: 960px; /* Adjusted to accommodate container (800px) + arrows (80px each side) */
+      margin: 0 auto; /* Ensure centering */
     }
     .tabs-wrapper {
       position: relative;
       width: 100%;
-      max-width: 880px; /* Adjusted previously */
-      margin-bottom: 2rem; /* Reverted to original spacing */
+      max-width: 800px; /* Match container width */
+      margin-bottom: 2rem;
     }
     .tabs-container {
       position: relative;
       flex-grow: 1;
-      overflow: hidden;
+      overflow: visible; /* Ensure arrows aren't clipped */
     }
     .year-display {
       font-family: 'Noto Sans JP', sans-serif;
@@ -209,10 +210,10 @@
       line-height: 1; /* Ensure text is centered */
     }
     .scroll-arrow.left {
-      left: -80px; /* Position outside the container */
+      left: -80px; /* 80px outside the tabs-wrapper */
     }
     .scroll-arrow.right {
-      right: -110px; /* Adjusted to ensure it's outside the container's outline */
+      right: -80px; /* 80px outside the tabs-wrapper */
     }
     .scroll-arrow:hover {
       background: #DC143C;
