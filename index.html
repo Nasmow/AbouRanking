@@ -8,8 +8,8 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- XLSX Library CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <!-- Google Fonts: Noto Sans JP and Roboto -->
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Google Fonts: Noto Sans JP -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
   <style>
     @font-face {
       font-family: 'Onsen Japan';
@@ -20,6 +20,12 @@
     @font-face {
       font-family: 'Niagato';
       src: url('./Niagato.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'Movie Font';
+      src: url('./Movie Font.ttf') format('truetype');
       font-weight: normal;
       font-style: normal;
     }
@@ -60,9 +66,8 @@
     }
     .ranking-table th, .ranking-table td {
       padding: 1rem;
-      text-align: left;
+      text-align: center; /* Center text */
       border-bottom: 1px solid rgba(220, 20, 60, 0.3); /* Crimson border */
-      font-family: 'Roboto', sans-serif; /* Thicker font for better outline ratio */
       color: #6B4E31; /* Brown text */
       text-shadow: -0.5px -0.5px 0 #fff, 0.5px -0.5px 0 #fff, -0.5px 0.5px 0 #fff, 0.5px 0.5px 0 #fff; /* White outline */
       font-size: 1.2rem; /* Base font size */
@@ -74,11 +79,15 @@
       background: rgba(139, 0, 0, 0.5); /* Dark red header */
       font-weight: bold;
     }
+    /* Use Movie Font for table data */
+    .ranking-table td {
+      font-family: 'Movie Font', sans-serif;
+    }
     /* Reduce outline for players below 3rd place */
     .ranking-table tr:not(.rank-1):not(.rank-2):not(.rank-3) td {
-      text-shadow: -0.3px -0.3px 0 #fff, 0.3px -0.3px 0 #fff, -0.3px 0.3px 0 #fff, 0.3px 0.3px 0 #fff; /* Smaller white outline */
+      text-shadow: -0.2px -0.2px 0 #fff, 0.2px -0.2px 0 #fff, -0.2px 0.2px 0 #fff, 0.2px 0.2px 0 #fff; /* Even smaller white outline */
     }
-    /* Set specific widths for columns to make spacing more symmetrical */
+    /* Set specific widths for columns to ensure symmetry */
     .ranking-table th:nth-child(1), .ranking-table td:nth-child(1) { /* Rank */
       width: 15%;
     }
@@ -165,8 +174,8 @@
       background: #ffffff; /* White when active */
       color: #6B4E31; /* Brown text */
       text-shadow: none; /* Remove outline when active */
-      transform: scale(1.2); /* Larger size for active tab */
-      font-size: 1.2rem; /* Larger font size for active tab */
+      transform: scale(1.3); /* Even larger size for active tab */
+      font-size: 1.4rem; /* Larger font size for active tab */
     }
     .scroll-arrow {
       background: rgba(139, 0, 0, 0.7);
@@ -184,7 +193,7 @@
       left: -40px; /* Position outside the container */
     }
     .scroll-arrow.right {
-      right: -40px; /* Position outside the container */
+      right: -40px; /* Mirror the left arrow */
     }
     .scroll-arrow:hover {
       background: #DC143C;
