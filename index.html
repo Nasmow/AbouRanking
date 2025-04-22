@@ -266,7 +266,7 @@
       position: absolute;
       top: 10px;
       left: calc(100% + 110px); /* Position to the right of language toggle */
-      background: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
+      background: transparent; /* Remove background */
       border: 1px solid #DC143C;
       border-radius: 5px;
       padding: 0.5rem;
@@ -519,8 +519,8 @@
 
         // Create tab button
         const button = document.createElement('button');
-        // Set April 2025 as the default active tab
-        button.className = `tab-button ${item.month === 'April' && item.year === '2025' ? 'active' : ''}`;
+        // No tab is active by default
+        button.className = `tab-button`;
         // Add ja class for Japanese to use Noto Sans JP
         if (currentLanguage === 'ja') {
           button.classList.add('ja');
@@ -531,7 +531,7 @@
         tabsContainer.appendChild(button);
       });
 
-      // Center the April 2025 tab after a delay to ensure DOM and styles are applied
+      // Center the April 2025 tab on load, but without the active class
       setTimeout(() => centerTab('april-2025'), 300);
 
       // Position the year display between October and January
@@ -544,7 +544,7 @@
       document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
       document.getElementById(monthId).className = 'tab-content active';
       document.querySelector(`button[onclick="showTab('${monthId}')"]`).className = `tab-button active${currentLanguage === 'ja' ? ' ja' : ''}`;
-      // Re-center the active tab when clicked
+      // Center the active tab when clicked
       setTimeout(() => centerTab(monthId), 300);
     }
 
@@ -662,7 +662,7 @@
         const monthId = `${item.month.toLowerCase()}-${item.year}`;
         const contentDiv = document.createElement('div');
         contentDiv.id = monthId;
-        contentDiv.className = `tab-content ${item.month === 'April' && item.year === '2025' ? 'active' : ''}`;
+        contentDiv.className = `tab-content`; // No tab is active by default
         contentDiv.innerHTML = `
           <table class="ranking-table w-full">
             <thead>
