@@ -71,7 +71,7 @@
       color: #6B4E31; /* Brown text */
       text-shadow: -0.5px -0.5px 0 #fff, 0.5px -0.5px 0 #fff, -0.5px 0.5px 0 #fff, 0.5px 0.5px 0 #fff; /* White outline */
     }
-    /* Use Onsen Japan for column headers */
+    /* Use Onsen Japan for column headers, except Win Rate */
     .ranking-table th {
       font-family: 'Onsen Japan', sans-serif;
       padding: 0.2rem 1rem; /* Reduced vertical padding */
@@ -80,6 +80,10 @@
       font-size: 1.2rem; /* Reduced font size for headers */
       line-height: 1.5; /* Larger line height for vertical centering */
       border-bottom: 2px solid rgba(220, 20, 60, 0.3); /* Thicker red outline for header */
+    }
+    /* Use Noto Sans JP for Win Rate column header to handle special characters */
+    .ranking-table th:nth-child(4) {
+      font-family: 'Noto Sans JP', sans-serif;
     }
     /* Use Black Matcha for table data, except for Win Rate */
     .ranking-table td {
@@ -92,18 +96,18 @@
     .ranking-table td:nth-child(4) { /* Win Rate column */
       font-family: 'Noto Sans JP', sans-serif;
     }
-    /* Set specific widths for columns to ensure symmetry */
+    /* Set specific widths for columns to ensure symmetry and fit Win Rate header */
     .ranking-table th:nth-child(1), .ranking-table td:nth-child(1) { /* Rank */
       width: 12%;
     }
     .ranking-table th:nth-child(2), .ranking-table td:nth-child(2) { /* Player */
-      width: 30%;
+      width: 28%; /* Reduced to accommodate wider Win Rate */
     }
     .ranking-table th:nth-child(3), .ranking-table td:nth-child(3) { /* Points */
       width: 15%;
     }
     .ranking-table th:nth-child(4), .ranking-table td:nth-child(4) { /* Win Rate */
-      width: 25%;
+      width: 27%; /* Increased to fit longest header */
     }
     .ranking-table th:nth-child(5), .ranking-table td:nth-child(5) { /* Placements */
       width: 18%;
@@ -127,7 +131,7 @@
       position: relative;
       width: 100%;
       max-width: 800px; /* Match container width */
-      margin-bottom: 1rem; /* Space between tabs and table */
+      margin-bottom: 2rem; /* Increased space between tabs and table */
     }
     .tabs-container {
       position: relative;
@@ -217,7 +221,7 @@
       font-family: 'Onsen Japan', sans-serif; /* Use locally loaded font */
       color: #6B4E31; /* Brown color to match the background */
       text-shadow: -0.5px -0.5px 0 #fff, 0.5px -0.5px 0 #fff, -0.5px 0.5px 0 #fff, 0.5px 0.5px 0 #fff; /* Reduced white outline */
-      margin-bottom: 7rem; /* Further increased space to ensure separation */
+      margin-bottom: 8rem; /* Increased space to ensure separation */
       letter-spacing: 0.1em; /* Add space between letters */
     }
     .watermark {
