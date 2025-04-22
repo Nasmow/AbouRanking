@@ -142,7 +142,7 @@
       font-family: 'Noto Sans JP', sans-serif;
       color: #6B4E31; /* Brown text */
       text-shadow: -0.5px -0.5px 0 #fff, 0.5px -0.5px 0 #fff, -0.5px 0.5px 0 #fff, 0.5px 0.5px 0 #fff; /* Reduced white outline */
-      font-size: 1.2rem; /* Reduced size */
+      font-size: 0.6rem; /* Half the size of tabs (1.2rem default) */
       text-align: center;
       position: absolute; /* Fix position */
       top: -1.5rem; /* Position above tabs */
@@ -209,10 +209,10 @@
       line-height: 1; /* Ensure text is centered */
     }
     .scroll-arrow.left {
-      left: -45px; /* Increased offset to position outside */
+      left: -60px; /* Increased offset to position outside the container */
     }
     .scroll-arrow.right {
-      right: -45px; /* Increased offset to position outside */
+      right: -60px; /* Increased offset to position outside the container */
     }
     .scroll-arrow:hover {
       background: #DC143C;
@@ -239,8 +239,11 @@
     .language-toggle {
       position: absolute;
       top: 10px;
-      left: calc(100% + 20px); /* Move further to the right */
+      left: calc(100% + 20px); /* Move to the right of the container */
       z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 5px; /* Space between language buttons */
     }
     .language-button {
       background: rgba(139, 0, 0, 0.7);
@@ -259,6 +262,25 @@
       color: #6B4E31;
       text-shadow: none;
     }
+    .points-panel {
+      position: absolute;
+      top: 10px;
+      left: calc(100% + 110px); /* Position to the right of language toggle */
+      background: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
+      border: 1px solid #DC143C;
+      border-radius: 5px;
+      padding: 0.5rem;
+      z-index: 1000;
+      font-family: 'Noto Sans JP', sans-serif;
+      color: #6B4E31;
+      font-size: 0.8rem; /* Smaller font for the panel */
+      text-shadow: -0.5px -0.5px 0 #fff, 0.5px -0.5px 0 #fff, -0.5px 0.5px 0 #fff, 0.5px 0.5px 0 #fff;
+    }
+    .points-table th, .points-table td {
+      padding: 0.2rem 0.5rem;
+      text-align: left;
+      border-bottom: 1px solid rgba(220, 20, 60, 0.3);
+    }
   </style>
 </head>
 <body class="flex items-center justify-center p-4">
@@ -272,13 +294,37 @@
         <button class="language-button" onclick="switchLanguage('zh')">中文</button>
       </div>
 
+      <!-- Points Panel -->
+      <div class="points-panel" id="points-panel">
+        <table class="points-table">
+          <thead>
+            <tr>
+              <th id="points-ranking-header">Rang</th>
+              <th id="points-points-header">Points</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>1st</td><td>50</td></tr>
+            <tr><td>2nd</td><td>40</td></tr>
+            <tr><td>3rd</td><td>35</td></tr>
+            <tr><td>4th</td><td>30</td></tr>
+            <tr><td>5th–6th</td><td>25</td></tr>
+            <tr><td>7th–8th</td><td>20</td></tr>
+            <tr><td>9th–12th</td><td>15</td></tr>
+            <tr><td>13th–16th</td><td>10</td></tr>
+            <tr><td>17th+</td><td>10</td></tr>
+            <tr><td id="points-absent" colspan="2">A = Absent</td></tr>
+          </tbody>
+        </table>
+      </div>
+
       <h1 id="title" class="text-4xl font-bold text-center">Classement Mensuel Abou Dojo</h1>
 
       <!-- Tabs Inside Container, Arrows Outside -->
       <div class="tabs-wrapper">
         <div class="scroll-arrow left" onclick="scrollTabs(-100)">◀</div>
         <div class="tabs-container">
-          <div id="year-display" class="year-display"></div>
+          <div id="year-display" class="year-display">2025</div>
           <div id="tabs" class="tabs-scroll"></div>
         </div>
         <div class="scroll-arrow right" onclick="scrollTabs(100)">▶</div>
@@ -302,6 +348,9 @@
         points: "Points",
         placements: "Placements",
         winRate: "% win (w/l)",
+        ranking: "Ranking",
+        pointsLabel: "Points",
+        absent: "A = Absent",
         months: {
           January: "January",
           February: "February",
@@ -324,6 +373,9 @@
         points: "Points",
         placements: "Classements",
         winRate: "% victoire (V/D)",
+        ranking: "Rang",
+        pointsLabel: "Points",
+        absent: "A = Absent",
         months: {
           January: "Janvier",
           February: "Fevrier",
@@ -346,6 +398,9 @@
         points: "ポイント",
         placements: "順位詳細",
         winRate: "勝率%(勝利/敗北)",
+        ranking: "順位",
+        pointsLabel: "ポイント",
+        absent: "A = 不在",
         months: {
           January: "1月",
           February: "2月",
@@ -368,6 +423,9 @@
         points: "积分",
         placements: "详细排名",
         winRate: "胜率%(胜/负)",
+        ranking: "排名",
+        pointsLabel: "积分",
+        absent: "A = 缺席",
         months: {
           January: "一月",
           February: "二月",
@@ -395,11 +453,14 @@
       // Update language buttons
       document.querySelectorAll('.language-button').forEach(btn => {
         btn.classList.remove('active');
-        // Match the button based on its onclick attribute to handle text changes
         if (btn.getAttribute('onclick') === `switchLanguage('${lang}')`) {
           btn.classList.add('active');
         }
       });
+      // Update points panel headers and labels
+      document.getElementById('points-ranking-header').textContent = translations[lang].ranking;
+      document.getElementById('points-points-header').textContent = translations[lang].pointsLabel;
+      document.getElementById('points-absent').textContent = translations[lang].absent;
       // Regenerate tabs to update table headers and month names
       generateTabs();
       // Reload tab content with updated headers
@@ -451,10 +512,6 @@
       // Clear existing tabs
       tabsContainer.innerHTML = '';
 
-      // Group months by year
-      const years = [...new Set(months.map(item => item.year))];
-      let currentYear = '2025'; // Default to 2025 since April 2025 is active
-
       months.forEach((item, index) => {
         const monthId = `${item.month.toLowerCase()}-${item.year}`;
         const displayName = `${item.month} ${item.year}`;
@@ -472,18 +529,6 @@
         button.onclick = () => showTab(monthId);
         button.setAttribute('data-month-id', monthId); // For centering
         tabsContainer.appendChild(button);
-      });
-
-      // Set initial year display
-      yearDisplay.textContent = currentYear;
-
-      // Update year when switching tabs
-      document.querySelectorAll('.tab-button').forEach(button => {
-        button.addEventListener('click', () => {
-          const monthId = button.getAttribute('data-month-id');
-          const year = monthId.split('-')[1];
-          yearDisplay.textContent = year;
-        });
       });
 
       // Center the April 2025 tab after a delay to ensure DOM and styles are applied
