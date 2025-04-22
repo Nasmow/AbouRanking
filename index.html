@@ -62,8 +62,12 @@
       border-bottom: 1px solid rgba(220, 20, 60, 0.3); /* Crimson border */
       font-family: 'Noto Sans JP', sans-serif;
       color: #6B4E31; /* Brown text */
-      text-shadow: -0.5px -0.5px 0 #fff, 0.5px -0.5px 0 #fff, -0.5px 0.5px 0 #fff, 0.5px 0.5px 0 #fff; /* Reduced white outline */
+      text-shadow: -0.5px -0.5px 0 rgba(220, 20, 60, 0.5), 0.5px -0.5px 0 rgba(220, 20, 60, 0.5), -0.5px 0.5px 0 rgba(220, 20, 60, 0.5), 0.5px 0.5px 0 rgba(220, 20, 60, 0.5); /* Red outline at 50% opacity */
       font-size: 1.2rem; /* Base font size */
+    }
+    /* Reduce outline for players below 3rd place */
+    .ranking-table tr:not(.rank-1):not(.rank-2):not(.rank-3) td {
+      text-shadow: -0.3px -0.3px 0 rgba(220, 20, 60, 0.5), 0.3px -0.3px 0 rgba(220, 20, 60, 0.5), -0.3px 0.3px 0 rgba(220, 20, 60, 0.5), 0.3px 0.3px 0 rgba(220, 20, 60, 0.5); /* Smaller red outline */
     }
     /* Reduce padding for table header to minimize height */
     .ranking-table th {
@@ -102,6 +106,7 @@
       align-items: center;
       position: relative;
       max-width: 100%;
+      margin-bottom: 1rem; /* Space between tabs and container */
     }
     .tabs-container {
       position: relative;
@@ -143,13 +148,14 @@
       font-family: 'Onsen Japan', sans-serif; /* Use Onsen Japan font */
     }
     .tab-button:hover {
-      background: #DC143C; /* Crimson on hover - Mouseover highlight */
+      background: #DC143C; /* Crimson on hover */
+      transform: scale(1.1); /* Slightly increase size on hover */
     }
     .tab-button.active {
       background: #ffffff; /* White when active */
       color: #6B4E31; /* Brown text */
       text-shadow: none; /* Remove outline when active */
-      transform: scale(1.2); /* Make active tab larger */
+      transform: scale(1.2); /* Larger size for active tab */
       font-size: 1.2rem; /* Larger font size for active tab */
     }
     .scroll-arrow {
@@ -207,6 +213,18 @@
   </style>
 </head>
 <body class="flex items-center justify-center p-4">
+  <div class="w-full max-w-4xl flex items-center justify-center">
+    <!-- Arrows and Tabs Outside the Container -->
+    <div class="scroll-arrow left" onclick="scrollTabs(-100)">◀</div>
+    <div class="tabs-wrapper">
+      <div class="tabs-container">
+        <div id="year-display" class="year-display"></div>
+        <div id="tabs" class="tabs-scroll"></div>
+      </div>
+    </div>
+    <div class="scroll-arrow right" onclick="scrollTabs(100)">▶</div>
+  </div>
+
   <div class="container w-full max-w-4xl">
     <!-- Language Toggle -->
     <div class="language-toggle">
@@ -215,16 +233,6 @@
     </div>
 
     <h1 id="title" class="text-3xl font-bold text-center mb-2">Classement Mensuel Abou Dojo</h1>
-    
-    <!-- Tabs with Arrows Outside -->
-    <div class="tabs-wrapper">
-      <div class="scroll-arrow left" onclick="scrollTabs(-100)">◀</div>
-      <div class="tabs-container">
-        <div id="year-display" class="year-display"></div>
-        <div id="tabs" class="tabs-scroll"></div>
-      </div>
-      <div class="scroll-arrow right" onclick="scrollTabs(100)">▶</div>
-    </div>
 
     <!-- Tab Content -->
     <div id="tab-contents"></div>
@@ -265,17 +273,17 @@
         placements: "Classements",
         months: {
           January: "Janvier",
-          February: "Février",
+          February: "Fevrier", // Replaced é with e
           March: "Mars",
           April: "Avril",
           May: "Mai",
           June: "Juin",
           July: "Juillet",
-          August: "Août",
+          August: "Aout", // Replaced û with u
           September: "Septembre",
           October: "Octobre",
           November: "Novembre",
-          December: "Décembre"
+          December: "Decembre" // Replaced é with e
         }
       }
     };
