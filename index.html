@@ -118,6 +118,7 @@
       height: 50px;
       overflow: hidden;
       margin-bottom: 2rem;
+      margin-top: 2rem; /* Added space above the tabs */
     }
     .tabs-track {
       display: flex;
@@ -130,7 +131,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: background-color 0.3s, color 0.3s, transform 0.3s, font-size 0.3s;
+      transition: background-color 0.3s, color 0.3s, transform 0.3s;
       background: rgba(139, 0, 0, 0.7);
       color: #6B4E31;
       border: 1px solid #DC143C;
@@ -147,10 +148,9 @@
       transform: scale(1.1);
     }
     .tab-button.active {
-      background: rgba(139, 0, 0, 0.7);
+      background: #DC143C; /* Changed to a different background color for active tab */
       color: #6B4E31;
-      transform: scale(1.3);
-      font-size: 1.6rem;
+      /* Removed transform: scale(1.3) and font-size: 1.6rem */
     }
     .tab-button.active.ja {
       font-family: 'Noto Sans JP', sans-serif;
@@ -221,7 +221,7 @@
     .language-toggle {
       position: absolute;
       top: 10px;
-      left: -80px; /* Moved to the left side of the container */
+      left: -80px;
       z-index: 1000;
       display: flex;
       flex-direction: column;
@@ -247,7 +247,7 @@
     .points-panel {
       position: absolute;
       top: 10px;
-      right: -80px; /* Moved to the right side of the container */
+      right: -140px; /* Adjusted to move further right */
       background: transparent;
       border: 1px solid #DC143C;
       border-radius: 5px;
@@ -258,7 +258,7 @@
       font-size: 0.8rem;
       text-shadow: -0.5px -0.5px 0 #fff, 0.5px -0.5px 0 #fff, -0.5px 0.5px 0 #fff, 0.5px 0.5px 0 #fff;
       transform: scale(1.3);
-      transform-origin: top right; /* Adjusted to scale from the right */
+      transform-origin: top right;
     }
     .points-table th, .points-table td {
       padding: 0.2rem 0.5rem;
@@ -529,34 +529,21 @@
     function updateTabPosition() {
       const tabsTrack = document.getElementById('tabs-track');
       const tabWidth = 150;
-      const activeScale = 1.3; // Scale factor for active tab
       const containerWidth = 800;
       const totalWidth = months.length * tabWidth;
       const maxOffset = containerWidth - totalWidth;
 
-      // Adjust tab width for the active tab's scale
-      const activeTabWidth = tabWidth * activeScale;
-      const normalTabWidth = tabWidth;
-
-      // Calculate the base offset to center the current tab
+      // Simplified offset calculation since active tab is no longer scaled
       let offset = 0;
 
-      // If it's the first tab, align its left edge with the container's left edge
       if (currentIndex === 0) {
         offset = 0;
-      }
-      // If it's the last tab, align its right edge with the container's right edge
-      else if (currentIndex === months.length - 1) {
-        offset = containerWidth - totalWidth - (activeTabWidth - tabWidth);
-      }
-      // Otherwise, center the tab
-      else {
+      } else if (currentIndex === months.length - 1) {
+        offset = containerWidth - totalWidth;
+      } else {
         offset = -currentIndex * tabWidth + containerWidth / 2 - tabWidth / 2;
-        // Adjust for the active tab's scale
-        offset -= (activeTabWidth - tabWidth) / 2;
       }
 
-      // Ensure the offset stays within bounds
       offset = Math.min(0, Math.max(maxOffset, offset));
 
       tabsTrack.style.transform = `translateX(${offset}px)`;
