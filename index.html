@@ -31,8 +31,9 @@
       position: relative; /* For positioning the watermark */
     }
     .container {
-      background: url('https://nasmow.github.io/Ranking/ranking_background2.jpg') no-repeat center center;
-      background-size: cover;
+      background: url('https://nasmow.github.io/Ranking/ranking_background2.jpg') no-repeat top center;
+      background-size: 100% auto; /* Ensure red paint and dried leaf are visible */
+      background-repeat: repeat-y; /* Repeat downward */
       background-color: rgba(255, 255, 255, 0.9); /* Fallback if image doesn't load */
       border-radius: 10px;
       padding: 1.5rem;
@@ -46,11 +47,14 @@
       display: block;
     }
     .ranking-table {
-      background: transparent; /* Make background transparent */
+      background: url('https://nasmow.github.io/Ranking/ranking_background2.jpg') no-repeat top center;
+      background-size: 100% auto; /* Ensure red paint and dried leaf are visible */
+      background-repeat: repeat-y; /* Repeat downward */
+      background-color: transparent; /* Transparent if image doesn't load */
       border-radius: 10px;
       overflow: hidden;
       border: 2px solid #DC143C; /* Crimson border */
-      backdrop-filter: blur(5px); /* Maintain readability over body background */
+      backdrop-filter: blur(5px); /* Maintain readability */
     }
     .ranking-table th, .ranking-table td {
       padding: 1rem;
@@ -131,7 +135,7 @@
       font-family: 'Onsen Japan', sans-serif; /* Use Onsen Japan font */
     }
     .tab-button:hover {
-      background: #DC143C; /* Crimson on hover */
+      background: #DC143C; /* Crimson on hover - Mouseover highlight */
     }
     .tab-button.active {
       background: #ffffff; /* White when active */
@@ -171,7 +175,7 @@
       bottom: 20px;
       right: 20px;
       color: #6B4E31; /* Brown color, 100% opacity */
-      font-size: 1.88rem; /* Increased by 12% from 1.68rem */
+      font-size: 1.88rem; /* Size from previous update */
       pointer-events: none; /* Prevent interaction */
       z-index: 1000; /* Ensure it stays on top */
       font-family: 'Niagato', sans-serif;
@@ -289,8 +293,8 @@
           } else if (row.Placement === 3) {
             tr.className = 'rank-3';
           }
-          // Replace '/' with '-' in Per-Event Rankings
-          const placements = (row['Per-Event Rankings'] || '').replace('/', '-');
+          // Parse and format the "Per-Event Rankings" (e.g., "2/7/A/A" to "2-7-A-A")
+          let placements = (row['Per-Event Rankings'] || '').split('/').map(item => item.trim() === '-' ? 'A' : item).join('-');
           tr.innerHTML = `
             <td>${row.Placement || ''}</td>
             <td>${row.Player || ''}</td>
@@ -347,7 +351,7 @@
 
         // Position the year display at the midpoint
         yearDisplay.style.left = `${midpoint}px`;
-        yearDisplay.style.transform = 'none'; // Remove the translateX(-50%) since we're positioning manually
+        yearDisplay.style.transform = 'none'; // Remove the translateX(-50%)
       }
     }
 
