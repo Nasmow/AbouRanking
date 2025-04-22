@@ -33,7 +33,7 @@
     .container {
       background: url('https://nasmow.github.io/Ranking/ranking_background2.jpg') no-repeat center center;
       background-size: cover;
-      background-color: rgba(255, 255, 255, 0.9); /* Increased opacity for readability */
+      background-color: rgba(255, 255, 255, 0.9); /* Fallback if image doesn't load */
       border-radius: 10px;
       padding: 1.5rem;
       backdrop-filter: blur(5px);
@@ -46,12 +46,11 @@
       display: block;
     }
     .ranking-table {
-      background: url('https://nasmow.github.io/Ranking/ranking_background2.jpg') no-repeat center center;
-      background-size: cover;
-      background-color: rgba(255, 255, 255, 0.9); /* Increased opacity for readability */
+      background: transparent; /* Make background transparent */
       border-radius: 10px;
       overflow: hidden;
       border: 2px solid #DC143C; /* Crimson border */
+      backdrop-filter: blur(5px); /* Maintain readability over body background */
     }
     .ranking-table th, .ranking-table td {
       padding: 1rem;
@@ -98,12 +97,17 @@
       overflow: hidden;
     }
     .year-display {
-      font-family: 'Noto Sans JP', sans-serif; /* Same as ranking text */
+      font-family: 'Noto Sans JP', sans-serif;
       color: #6B4E31; /* Brown text */
       text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff; /* White outline */
-      font-size: 1.5rem;
+      font-size: 1.2rem; /* Reduced size */
       text-align: center;
-      margin-bottom: 0.5rem;
+      position: absolute; /* Fix position */
+      top: -1.5rem; /* Position above tabs */
+      left: 50%; /* Center horizontally */
+      transform: translateX(-50%); /* Adjust for centering */
+      width: 100%;
+      z-index: 10;
     }
     .tabs-scroll {
       display: flex;
@@ -166,19 +170,18 @@
       position: fixed;
       bottom: 20px;
       right: 20px;
-      color: #6B4E31; /* Brown color */
-      opacity: 0.4; /* 40% opacity */
-      font-size: 1.68rem; /* Increased by 12% from 1.5rem */
+      color: #6B4E31; /* Brown color, 100% opacity */
+      font-size: 1.88rem; /* Increased by 12% from 1.68rem */
       pointer-events: none; /* Prevent interaction */
       z-index: 1000; /* Ensure it stays on top */
-      font-family: 'Niagato', sans-serif; /* Use Niagato font */
-      text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff; /* White outline */
+      font-family: 'Niagato', sans-serif;
+      text-shadow: -0.5px -0.5px 0 #fff, 0.5px -0.5px 0 #fff, -0.5px 0.5px 0 #fff, 0.5px 0.5px 0 #fff; /* Smaller white outline */
     }
   </style>
 </head>
 <body class="flex items-center justify-center p-4">
   <div class="container w-full max-w-4xl">
-    <h1 class="text-3xl font-bold text-center mb-6">Monthly Ladder Abou Dojo</h1>
+    <h1 class="text-3xl font-bold text-center mb-2">Monthly Ladder Abou Dojo</h1>
     
     <!-- Tabs -->
     <div class="tabs-container">
@@ -233,28 +236,6 @@
         button.onclick = () => showTab(monthId);
         button.setAttribute('data-month-id', monthId); // For centering
         tabsContainer.appendChild(button);
-
-        // Create tab content
-        const contentDiv = document.createElement('div');
-        contentDiv.id = monthId;
-        contentDiv.className = `tab-content ${item.month === 'April' && item.year === '2025' ? 'active' : ''}`;
-        contentDiv.innerHTML = `
-          <table class="ranking-table w-full">
-            <thead>
-              <tr>
-                <th>Rank</th>
-                <th>Player</th>
-                <th>Points</th>
-                <th>Placements</th>
-              </tr>
-            </thead>
-            <tbody id="${monthId}-table"></tbody>
-          </table>
-        `;
-        contentsContainer.appendChild(contentDiv);
-
-        // Load Excel data for this month
-        loadExcelData(`./Rankings_${item.month}_${item.year}.xlsx`, `${monthId}-table`);
       });
 
       // Set initial year display
@@ -269,8 +250,11 @@
         });
       });
 
-      // Center the April 2025 tab after a longer delay to ensure DOM and styles are applied
+      // Center the April 2025 tab after a delay to ensure DOM and styles are applied
       setTimeout(() => centerTab('april-2025'), 300);
+
+      // Position the year display between October and January
+      setTimeout(() => positionYearDisplay(), 300);
     }
 
     // Tab switching function
@@ -325,6 +309,8 @@
     function scrollTabs(amount) {
       const tabs = document.getElementById('tabs');
       tabs.scrollLeft += amount;
+      // Reposition the year display after scrolling
+      positionYearDisplay();
     }
 
     // Center a specific tab on the screen
@@ -342,9 +328,57 @@
       }
     }
 
+    // Position the year display between October and January
+    function positionYearDisplay() {
+      const tabsContainer = document.getElementById('tabs');
+      const octoberTab = document.querySelector(`button[data-month-id="october-2024"]`);
+      const januaryTab = document.querySelector(`button[data-month-id="january-2025"]`);
+      const yearDisplay = document.getElementById('year-display');
+
+      if (octoberTab && januaryTab) {
+        const octoberRect = octoberTab.getBoundingClientRect();
+        const januaryRect = januaryTab.getBoundingClientRect();
+        const tabsRect = tabsContainer.getBoundingClientRect();
+
+        // Calculate the midpoint between October and January
+        const octoberCenter = octoberRect.left + (octoberRect.width / 2) - tabsRect.left + tabsContainer.scrollLeft;
+        const januaryCenter = januaryRect.left + (januaryRect.width / 2) - tabsRect.left + tabsContainer.scrollLeft;
+        const midpoint = (octoberCenter + januaryCenter) / 2;
+
+        // Position the year display at the midpoint
+        yearDisplay.style.left = `${midpoint}px`;
+        yearDisplay.style.transform = 'none'; // Remove the translateX(-50%) since we're positioning manually
+      }
+    }
+
     // Initialize tabs and load data
     window.onload = function() {
       generateTabs();
+
+      // Create tab content after generating tabs
+      months.forEach((item) => {
+        const monthId = `${item.month.toLowerCase()}-${item.year}`;
+        const contentDiv = document.createElement('div');
+        contentDiv.id = monthId;
+        contentDiv.className = `tab-content ${item.month === 'April' && item.year === '2025' ? 'active' : ''}`;
+        contentDiv.innerHTML = `
+          <table class="ranking-table w-full">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Player</th>
+                <th>Points</th>
+                <th>Placements</th>
+              </tr>
+            </thead>
+            <tbody id="${monthId}-table"></tbody>
+          </table>
+        `;
+        document.getElementById('tab-contents').appendChild(contentDiv);
+
+        // Load Excel data for this month
+        loadExcelData(`./Rankings_${item.month}_${item.year}.xlsx`, `${monthId}-table`);
+      });
     };
   </script>
 </body>
