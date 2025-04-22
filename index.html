@@ -505,32 +505,42 @@
         const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
         const jsonData = XLSX.utils.sheet_to_json(firstSheet);
 
+        // Normalize the data by converting keys to lowercase and removing special characters
+        const normalizedData = jsonData.map(row => {
+          const normalizedRow = {};
+          for (const key in row) {
+            const normalizedKey = key.toLowerCase().replace(/[^a-z0-9]/g, '');
+            normalizedRow[normalizedKey] = row[key];
+          }
+          return normalizedRow;
+        });
+
         const tbody = document.getElementById(tableId);
         tbody.innerHTML = '';
-        jsonData.forEach(row => {
+        normalizedData.forEach(row => {
           const tr = document.createElement('tr');
           // Add rank-specific class for 1st, 2nd, 3rd
-          if (row.Placement === 1) {
+          if (row.placement === 1) {
             tr.className = 'rank-1';
-          } else if (row.Placement === 2) {
+          } else if (row.placement === 2) {
             tr.className = 'rank-2';
-          } else if (row.Placement === 3) {
+          } else if (row.placement === 3) {
             tr.className = 'rank-3';
           }
-          // Parse and format the "Per-Event Rankings" (e.g., "2/7/A/A" to "2-7-A-A")
-          let placements = (row['Per-Event Rankings'] || '').split('/').map(item => item.trim() === '-' ? 'A' : item).join('-');
+          // Parse and format the "Per-Event Rankings"
+          let placements = (row.pereventrankings || '').split('/').map(item => item.trim() === '-' ? 'A' : item).join('-');
           // Calculate win rate for 2025 data
           let winRateDisplay = 'N/A';
           if (year === '2025') {
-            const winRate = row['Win Rate'] || 0;
-            const wins = row['Wins'] || 0;
-            const losses = row['Losses'] || 0;
+            const winRate = row.winrate || 0;
+            const wins = row.matcheswon || 0;
+            const losses = row.matcheslost || 0;
             winRateDisplay = `${Math.round(winRate)}%(${wins}/${losses})`;
           }
           tr.innerHTML = `
-            <td>${row.Placement || ''}</td>
-            <td>${row.Player || ''}</td>
-            <td>${row['Total Points'] || ''}</td>
+            <td>${row.placement || ''}</td>
+            <td>${row.player || ''}</td>
+            <td>${row.totalpoints || ''}</td>
             <td>${placements}</td>
             <td>${winRateDisplay}</td>
           `;
