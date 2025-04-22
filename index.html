@@ -81,28 +81,32 @@
       line-height: 1.5; /* Larger line height for vertical centering */
       border-bottom: 2px solid rgba(220, 20, 60, 0.3); /* Thicker red outline for header */
     }
-    /* Use Black Matcha for table data */
+    /* Use Black Matcha for table data, except for Win Rate */
     .ranking-table td {
       font-family: 'Black Matcha', sans-serif;
       font-size: 2rem; /* Same size as 1st place for all ranks */
       font-weight: bold; /* Match Rank 1 settings */
       line-height: 1.1; /* Match Rank 1 settings */
     }
+    /* Use default font (Noto Sans JP) for Win Rate column to handle special characters */
+    .ranking-table td:nth-child(4) { /* Win Rate column */
+      font-family: 'Noto Sans JP', sans-serif;
+    }
     /* Set specific widths for columns to ensure symmetry */
     .ranking-table th:nth-child(1), .ranking-table td:nth-child(1) { /* Rank */
-      width: 12%; /* Reduced to accommodate new column */
+      width: 12%;
     }
     .ranking-table th:nth-child(2), .ranking-table td:nth-child(2) { /* Player */
-      width: 30%; /* Reduced to accommodate new column */
+      width: 30%;
     }
     .ranking-table th:nth-child(3), .ranking-table td:nth-child(3) { /* Points */
-      width: 15%; /* Reduced to accommodate new column */
+      width: 15%;
     }
-    .ranking-table th:nth-child(4), .ranking-table td:nth-child(4) { /* Placements */
-      width: 18%; /* Reduced to accommodate new column */
+    .ranking-table th:nth-child(4), .ranking-table td:nth-child(4) { /* Win Rate */
+      width: 25%;
     }
-    .ranking-table th:nth-child(5), .ranking-table td:nth-child(5) { /* Win Rate */
-      width: 25%; /* New column */
+    .ranking-table th:nth-child(5), .ranking-table td:nth-child(5) { /* Placements */
+      width: 18%;
     }
     /* Font sizes for top ranks */
     .ranking-table tr.rank-1 td {
@@ -406,8 +410,8 @@
                   <th>${translations[lang].rank}</th>
                   <th>${translations[lang].player}</th>
                   <th>${translations[lang].points}</th>
-                  <th>${translations[lang].placements}</th>
                   <th>${translations[lang].winRate}</th>
+                  <th>${translations[lang].placements}</th>
                 </tr>
               </thead>
               <tbody id="${monthId}-table"></tbody>
@@ -541,8 +545,8 @@
             <td>${row.placement || ''}</td>
             <td>${row.player || ''}</td>
             <td>${row.totalpoints || ''}</td>
-            <td>${placements}</td>
             <td>${winRateDisplay}</td>
+            <td>${placements}</td>
           `;
           tbody.appendChild(tr);
         });
@@ -617,8 +621,8 @@
                 <th>${translations[currentLanguage].rank}</th>
                 <th>${translations[currentLanguage].player}</th>
                 <th>${translations[currentLanguage].points}</th>
-                <th>${translations[currentLanguage].placements}</th>
                 <th>${translations[currentLanguage].winRate}</th>
+                <th>${translations[currentLanguage].placements}</th>
               </tr>
             </thead>
             <tbody id="${monthId}-table"></tbody>
