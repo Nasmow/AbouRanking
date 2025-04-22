@@ -31,7 +31,7 @@
       position: relative; /* For positioning the watermark */
     }
     .container {
-      background: url('https://raw.githubusercontent.com/Nasmow/Ranking/main/ranking_background2.jpg') no-repeat center center;
+      background: url('https://nasmow.github.io/Ranking/ranking_background2.jpg') no-repeat center center;
       background-size: cover;
       background-color: rgba(255, 255, 255, 0.9); /* Increased opacity for readability */
       border-radius: 10px;
@@ -46,7 +46,7 @@
       display: block;
     }
     .ranking-table {
-      background: url('https://raw.githubusercontent.com/Nasmow/Ranking/main/ranking_background2.jpg') no-repeat center center;
+      background: url('https://nasmow.github.io/Ranking/ranking_background2.jpg') no-repeat center center;
       background-size: cover;
       background-color: rgba(255, 255, 255, 0.9); /* Increased opacity for readability */
       border-radius: 10px;
@@ -57,26 +57,39 @@
       padding: 1rem;
       text-align: left;
       border-bottom: 1px solid rgba(220, 20, 60, 0.3); /* Crimson border */
-      font-family: 'Noto Sans JP', sans-serif; /* Revert to Noto Sans JP */
+      font-family: 'Noto Sans JP', sans-serif;
       color: #6B4E31; /* Brown text */
       text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff; /* White outline */
-      font-size: 1.2rem; /* Increased base font size */
+      font-size: 1.2rem; /* Base font size */
+    }
+    /* Set specific widths for columns to make spacing more symmetrical */
+    .ranking-table th:nth-child(1), .ranking-table td:nth-child(1) { /* Rank */
+      width: 15%;
+    }
+    .ranking-table th:nth-child(2), .ranking-table td:nth-child(2) { /* Player */
+      width: 40%;
+    }
+    .ranking-table th:nth-child(3), .ranking-table td:nth-child(3) { /* Points */
+      width: 20%;
+    }
+    .ranking-table th:nth-child(4), .ranking-table td:nth-child(4) { /* Placements */
+      width: 25%;
     }
     .ranking-table th {
       background: rgba(139, 0, 0, 0.5); /* Dark red header */
       font-weight: bold;
     }
-    /* Increased font sizes for top 3 ranks */
+    /* Font sizes for top 3 ranks */
     .ranking-table tr.rank-1 td {
-      font-size: 2rem; /* Increased for 1st place */
+      font-size: 2rem; /* 1st place */
       font-weight: bold;
     }
     .ranking-table tr.rank-2 td {
-      font-size: 1.8rem; /* Increased for 2nd place */
+      font-size: 1.8rem; /* 2nd place */
       font-weight: bold;
     }
     .ranking-table tr.rank-3 td {
-      font-size: 1.6rem; /* Increased for 3rd place */
+      font-size: 1.6rem; /* 3rd place */
       font-weight: bold;
     }
     .tabs-container {
@@ -85,7 +98,7 @@
       overflow: hidden;
     }
     .year-display {
-      font-family: 'Onsen Japan', sans-serif;
+      font-family: 'Noto Sans JP', sans-serif; /* Same as ranking text */
       color: #6B4E31; /* Brown text */
       text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff; /* White outline */
       font-size: 1.5rem;
@@ -155,7 +168,7 @@
       right: 20px;
       color: #6B4E31; /* Brown color */
       opacity: 0.4; /* 40% opacity */
-      font-size: 1.5rem;
+      font-size: 1.68rem; /* Increased by 12% from 1.5rem */
       pointer-events: none; /* Prevent interaction */
       z-index: 1000; /* Ensure it stays on top */
       font-family: 'Niagato', sans-serif; /* Use Niagato font */
@@ -232,7 +245,7 @@
                 <th>Rank</th>
                 <th>Player</th>
                 <th>Points</th>
-                <th>Per-Event Rankings</th>
+                <th>Placements</th>
               </tr>
             </thead>
             <tbody id="${monthId}-table"></tbody>
@@ -292,11 +305,13 @@
           } else if (row.Placement === 3) {
             tr.className = 'rank-3';
           }
+          // Replace '/' with '-' in Per-Event Rankings
+          const placements = (row['Per-Event Rankings'] || '').replace('/', '-');
           tr.innerHTML = `
             <td>${row.Placement || ''}</td>
             <td>${row.Player || ''}</td>
             <td>${row['Total Points'] || ''}</td>
-            <td>${row['Per-Event Rankings'] || ''}</td>
+            <td>${placements}</td>
           `;
           tbody.appendChild(tr);
         });
