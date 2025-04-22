@@ -8,8 +8,8 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- XLSX Library CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <!-- Google Fonts: Noto Sans JP -->
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Google Fonts: Noto Sans JP and Roboto -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
     @font-face {
       font-family: 'Onsen Japan';
@@ -39,6 +39,8 @@
       padding: 1.5rem;
       backdrop-filter: blur(5px);
       position: relative;
+      width: 100%;
+      max-width: 800px; /* Adjusted to match typical content width */
     }
     .tab-content {
       display: none;
@@ -60,20 +62,21 @@
       padding: 1rem;
       text-align: left;
       border-bottom: 1px solid rgba(220, 20, 60, 0.3); /* Crimson border */
-      font-family: 'Noto Sans JP', sans-serif;
+      font-family: 'Roboto', sans-serif; /* Thicker font for better outline ratio */
       color: #6B4E31; /* Brown text */
-      text-shadow: -0.5px -0.5px 0 rgba(220, 20, 60, 0.5), 0.5px -0.5px 0 rgba(220, 20, 60, 0.5), -0.5px 0.5px 0 rgba(220, 20, 60, 0.5), 0.5px 0.5px 0 rgba(220, 20, 60, 0.5); /* Red outline at 50% opacity */
+      text-shadow: -0.5px -0.5px 0 #fff, 0.5px -0.5px 0 #fff, -0.5px 0.5px 0 #fff, 0.5px 0.5px 0 #fff; /* White outline */
       font-size: 1.2rem; /* Base font size */
     }
-    /* Reduce outline for players below 3rd place */
-    .ranking-table tr:not(.rank-1):not(.rank-2):not(.rank-3) td {
-      text-shadow: -0.3px -0.3px 0 rgba(220, 20, 60, 0.5), 0.3px -0.3px 0 rgba(220, 20, 60, 0.5), -0.3px 0.3px 0 rgba(220, 20, 60, 0.5), 0.3px 0.3px 0 rgba(220, 20, 60, 0.5); /* Smaller red outline */
-    }
-    /* Reduce padding for table header to minimize height */
+    /* Use Onsen Japan for column headers */
     .ranking-table th {
+      font-family: 'Onsen Japan', sans-serif;
       padding: 0.2rem 1rem; /* Reduced vertical padding */
       background: rgba(139, 0, 0, 0.5); /* Dark red header */
       font-weight: bold;
+    }
+    /* Reduce outline for players below 3rd place */
+    .ranking-table tr:not(.rank-1):not(.rank-2):not(.rank-3) td {
+      text-shadow: -0.3px -0.3px 0 #fff, 0.3px -0.3px 0 #fff, -0.3px 0.3px 0 #fff, 0.3px 0.3px 0 #fff; /* Smaller white outline */
     }
     /* Set specific widths for columns to make spacing more symmetrical */
     .ranking-table th:nth-child(1), .ranking-table td:nth-child(1) { /* Rank */
@@ -101,12 +104,19 @@
       font-size: 1.6rem; /* 3rd place */
       font-weight: bold;
     }
-    .tabs-wrapper {
+    .outer-wrapper {
       display: flex;
       align-items: center;
+      justify-content: center;
       position: relative;
-      max-width: 100%;
-      margin-bottom: 1rem; /* Space between tabs and container */
+      width: 100%;
+      max-width: 900px; /* Wider to allow arrows to stick out */
+    }
+    .tabs-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 800px; /* Match container width */
+      margin-bottom: 1rem; /* Space between tabs and table */
     }
     .tabs-container {
       position: relative;
@@ -166,7 +176,15 @@
       z-index: 10;
       border-radius: 50%;
       border: 1px solid #DC143C;
-      margin: 0 5px; /* Space between arrows and tabs */
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .scroll-arrow.left {
+      left: -40px; /* Position outside the container */
+    }
+    .scroll-arrow.right {
+      right: -40px; /* Position outside the container */
     }
     .scroll-arrow:hover {
       background: #DC143C;
@@ -213,29 +231,29 @@
   </style>
 </head>
 <body class="flex items-center justify-center p-4">
-  <div class="w-full max-w-4xl flex items-center justify-center">
-    <!-- Arrows and Tabs Outside the Container -->
-    <div class="scroll-arrow left" onclick="scrollTabs(-100)">◀</div>
-    <div class="tabs-wrapper">
-      <div class="tabs-container">
-        <div id="year-display" class="year-display"></div>
-        <div id="tabs" class="tabs-scroll"></div>
+  <div class="outer-wrapper">
+    <div class="container">
+      <!-- Language Toggle -->
+      <div class="language-toggle">
+        <button class="language-button active" onclick="switchLanguage('fr')">FR</button>
+        <button class="language-button" onclick="switchLanguage('en')">EN</button>
       </div>
+
+      <h1 id="title" class="text-3xl font-bold text-center mb-2">Classement Mensuel Abou Dojo</h1>
+
+      <!-- Tabs Inside Container, Arrows Outside -->
+      <div class="tabs-wrapper">
+        <div class="scroll-arrow left" onclick="scrollTabs(-100)">◀</div>
+        <div class="tabs-container">
+          <div id="year-display" class="year-display"></div>
+          <div id="tabs" class="tabs-scroll"></div>
+        </div>
+        <div class="scroll-arrow right" onclick="scrollTabs(100)">▶</div>
+      </div>
+
+      <!-- Tab Content -->
+      <div id="tab-contents"></div>
     </div>
-    <div class="scroll-arrow right" onclick="scrollTabs(100)">▶</div>
-  </div>
-
-  <div class="container w-full max-w-4xl">
-    <!-- Language Toggle -->
-    <div class="language-toggle">
-      <button class="language-button active" onclick="switchLanguage('fr')">FR</button>
-      <button class="language-button" onclick="switchLanguage('en')">EN</button>
-    </div>
-
-    <h1 id="title" class="text-3xl font-bold text-center mb-2">Classement Mensuel Abou Dojo</h1>
-
-    <!-- Tab Content -->
-    <div id="tab-contents"></div>
   </div>
 
   <!-- Watermark -->
@@ -273,17 +291,17 @@
         placements: "Classements",
         months: {
           January: "Janvier",
-          February: "Fevrier", // Replaced é with e
+          February: "Fevrier",
           March: "Mars",
           April: "Avril",
           May: "Mai",
           June: "Juin",
           July: "Juillet",
-          August: "Aout", // Replaced û with u
+          August: "Aout",
           September: "Septembre",
           October: "Octobre",
           November: "Novembre",
-          December: "Decembre" // Replaced é with e
+          December: "Decembre"
         }
       }
     };
