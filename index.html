@@ -77,7 +77,7 @@
       padding: 0.2rem 1rem; /* Reduced vertical padding */
       background: transparent; /* Remove red background */
       font-weight: bold;
-      font-size: 1.4rem; /* Increased font size for headers */
+      font-size: 1.6rem; /* Increased font size for headers */
       line-height: 1.5; /* Larger line height for vertical centering */
       border-bottom: 2px solid rgba(220, 20, 60, 0.3); /* Thicker red outline for header */
     }
@@ -125,13 +125,13 @@
       justify-content: center;
       position: relative;
       width: 100%;
-      max-width: 1040px; /* Increased to accommodate wider tabs-wrapper (880px + 80px each side) */
+      max-width: 1040px; /* Ensure enough space for arrows */
     }
     .tabs-wrapper {
       position: relative;
       width: 100%;
-      max-width: 880px; /* Increased to push arrows further out */
-      margin-bottom: 4rem; /* Increased space between tabs and table */
+      max-width: 880px; /* Adjusted previously */
+      margin-bottom: 2rem; /* Reverted to original spacing */
     }
     .tabs-container {
       position: relative;
@@ -212,7 +212,7 @@
       left: -80px; /* Position outside the container */
     }
     .scroll-arrow.right {
-      right: -80px; /* Position outside the container */
+      right: -110px; /* Adjusted to ensure it's outside the container's outline */
     }
     .scroll-arrow:hover {
       background: #DC143C;
@@ -221,12 +221,8 @@
       font-family: 'Onsen Japan', sans-serif; /* Use locally loaded font */
       color: #6B4E31; /* Brown color to match the background */
       text-shadow: -0.5px -0.5px 0 #fff, 0.5px -0.5px 0 #fff, -0.5px 0.5px 0 #fff, 0.5px 0.5px 0 #fff; /* Reduced white outline */
-      margin-bottom: 8rem; /* Increased space to ensure separation */
+      margin-bottom: 10rem; /* Increased space between title and tabs */
       letter-spacing: 0.1em; /* Add space between letters */
-    }
-    hr {
-      border: 1px solid rgba(220, 20, 60, 0.5); /* Crimson line with some transparency */
-      margin: 1rem 0; /* Space above and below the line */
     }
     .watermark {
       position: fixed;
@@ -339,9 +335,6 @@
         </div>
         <div class="scroll-arrow right" onclick="scrollTabs(100)">▶</div>
       </div>
-
-      <!-- Horizontal Line for Separation -->
-      <hr>
 
       <!-- Tab Content -->
       <div id="tab-contents"></div>
