@@ -77,7 +77,7 @@
       padding: 0.2rem 1rem; /* Reduced vertical padding */
       background: transparent; /* Remove red background */
       font-weight: bold;
-      font-size: 1.2rem; /* Reduced font size for headers */
+      font-size: 1.4rem; /* Increased font size for headers */
       line-height: 1.5; /* Larger line height for vertical centering */
       border-bottom: 2px solid rgba(220, 20, 60, 0.3); /* Thicker red outline for header */
     }
@@ -125,13 +125,13 @@
       justify-content: center;
       position: relative;
       width: 100%;
-      max-width: 960px; /* Increased to ensure arrows are outside (800px container + 80px each side) */
+      max-width: 1040px; /* Increased to accommodate wider tabs-wrapper (880px + 80px each side) */
     }
     .tabs-wrapper {
       position: relative;
       width: 100%;
-      max-width: 800px; /* Match container width */
-      margin-bottom: 2rem; /* Increased space between tabs and table */
+      max-width: 880px; /* Increased to push arrows further out */
+      margin-bottom: 4rem; /* Increased space between tabs and table */
     }
     .tabs-container {
       position: relative;
@@ -209,10 +209,10 @@
       line-height: 1; /* Ensure text is centered */
     }
     .scroll-arrow.left {
-      left: -80px; /* Increased offset to ensure it's outside */
+      left: -80px; /* Position outside the container */
     }
     .scroll-arrow.right {
-      right: -80px; /* Mirror the left arrow's position */
+      right: -80px; /* Position outside the container */
     }
     .scroll-arrow:hover {
       background: #DC143C;
@@ -223,6 +223,10 @@
       text-shadow: -0.5px -0.5px 0 #fff, 0.5px -0.5px 0 #fff, -0.5px 0.5px 0 #fff, 0.5px 0.5px 0 #fff; /* Reduced white outline */
       margin-bottom: 8rem; /* Increased space to ensure separation */
       letter-spacing: 0.1em; /* Add space between letters */
+    }
+    hr {
+      border: 1px solid rgba(220, 20, 60, 0.5); /* Crimson line with some transparency */
+      margin: 1rem 0; /* Space above and below the line */
     }
     .watermark {
       position: fixed;
@@ -335,6 +339,9 @@
         </div>
         <div class="scroll-arrow right" onclick="scrollTabs(100)">▶</div>
       </div>
+
+      <!-- Horizontal Line for Separation -->
+      <hr>
 
       <!-- Tab Content -->
       <div id="tab-contents"></div>
