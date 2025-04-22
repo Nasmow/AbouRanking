@@ -70,7 +70,7 @@
       border-bottom: 1px solid rgba(220, 20, 60, 0.3); /* Crimson border */
       color: #6B4E31; /* Brown text */
       text-shadow: -0.5px -0.5px 0 #fff, 0.5px -0.5px 0 #fff, -0.5px 0.5px 0 #fff, 0.5px 0.5px 0 #fff; /* White outline */
-      font-size: 1.2rem; /* Base font size */
+      font-size: 1.6rem; /* Base font size for 3rd place and below */
     }
     /* Use Onsen Japan for column headers */
     .ranking-table th {
@@ -100,7 +100,7 @@
     .ranking-table th:nth-child(4), .ranking-table td:nth-child(4) { /* Placements */
       width: 25%;
     }
-    /* Font sizes for top 3 ranks */
+    /* Font sizes for top ranks */
     .ranking-table tr.rank-1 td {
       font-size: 2rem; /* 1st place */
       font-weight: bold;
@@ -109,10 +109,7 @@
       font-size: 1.8rem; /* 2nd place */
       font-weight: bold;
     }
-    .ranking-table tr.rank-3 td {
-      font-size: 1.6rem; /* 3rd place */
-      font-weight: bold;
-    }
+    /* 3rd place and below are the same size (1.6rem, set in base style) */
     .outer-wrapper {
       display: flex;
       align-items: center;
@@ -155,7 +152,7 @@
       display: none; /* Hide scrollbar in Chrome/Safari */
     }
     .tab-button {
-      transition: background-color 0.3s, color 0.3s, transform 0.3s;
+      transition: background-color 0.3s, color 0.3s, transform 0.3s, font-size 0.3s;
       background: rgba(139, 0, 0, 0.7); /* Dark red */
       color: #6B4E31; /* Brown text */
       border: 1px solid #DC143C; /* Crimson border */
@@ -171,10 +168,10 @@
       transform: scale(1.1); /* Slightly increase size on hover */
     }
     .tab-button.active {
-      background: #ffffff; /* White when active */
+      background: rgba(139, 0, 0, 0.7); /* Same as default, no white highlight */
       color: #6B4E31; /* Brown text */
-      text-shadow: none; /* Remove outline when active */
-      transform: scale(1.3); /* Even larger size for active tab */
+      text-shadow: -0.5px -0.5px 0 #fff, 0.5px -0.5px 0 #fff, -0.5px 0.5px 0 #fff, 0.5px 0.5px 0 #fff; /* Keep outline */
+      transform: scale(1.3); /* Larger size for active tab */
       font-size: 1.4rem; /* Larger font size for active tab */
     }
     .scroll-arrow {
@@ -188,12 +185,17 @@
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
+      width: 30px; /* Ensure consistent size */
+      height: 30px; /* Ensure consistent size */
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .scroll-arrow.left {
       left: -40px; /* Position outside the container */
     }
     .scroll-arrow.right {
-      right: -40px; /* Mirror the left arrow */
+      right: -40px; /* Position outside the container */
     }
     .scroll-arrow:hover {
       background: #DC143C;
