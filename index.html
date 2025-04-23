@@ -47,7 +47,7 @@
       position: relative;
       width: 100%;
       max-width: 800px;
-      flex: 0 0 800px; /* Ensure container doesn't shrink */
+      flex: 0 0 800px;
     }
     .tab-content {
       display: none;
@@ -78,13 +78,10 @@
       background: transparent;
       font-weight: bold;
       font-size: 1.6rem;
-      line-height: 1.5;
+      line-height: 40px; /* Match height for vertical centering */
       border-bottom: 2px solid rgba(220, 20, 60, 0.3);
       height: 40px;
       box-sizing: border-box;
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
     .ranking-table th:nth-child(4) {
       font-family: 'Noto Sans JP', sans-serif;
@@ -116,7 +113,7 @@
       width: 100%;
       max-width: 960px;
       margin: 0 auto;
-      flex-wrap: wrap; /* Allow wrapping to prevent squishing */
+      flex-wrap: wrap;
     }
     .tabs-container {
       position: relative;
@@ -126,7 +123,7 @@
       overflow: hidden;
       margin-bottom: 2rem;
       margin-top: 2rem;
-      flex: 0 0 960px; /* Ensure tabs-container takes full width */
+      flex: 0 0 960px;
     }
     .tabs-track {
       display: flex;
@@ -207,6 +204,7 @@
       font-family: 'Onsen Japan', sans-serif;
       color: #6B4E31;
       text-shadow: -0.5px -0.5px 0 #fff, 0.5px -0.5px 0 #fff, -0.5px 0.5px 0 #fff, 0.5px 0.5px 0 #fff;
+      margin-top: 3rem; /* Add space above to avoid overlap with panels */
       margin-bottom: 10rem;
       letter-spacing: 0.1em;
     }
@@ -232,9 +230,9 @@
       left: 20px;
       z-index: 1000;
       display: flex;
-      flex-direction: row; /* Changed to row to fit within 40px height */
+      flex-direction: row;
       gap: 5px;
-      height: 40px; /* Match column header height */
+      height: 40px;
       align-items: center;
       overflow: hidden;
     }
@@ -242,11 +240,11 @@
       background: rgba(139, 0, 0, 0.7);
       color: #6B4E31;
       border: 1px solid #DC143C;
-      padding: 0.2rem 0.4rem; /* Reduced padding to fit */
+      padding: 0.2rem 0.4rem;
       cursor: pointer;
       font-family: 'Noto Sans JP', sans-serif;
       text-shadow: -0.5px -0.5px 0 #fff, 0.5px -0.5px 0 #fff, -0.5px 0.5px 0 #fff, 0.5px 0.5px 0 #fff;
-      font-size: 0.8rem; /* Reduced font size to fit */
+      font-size: 0.8rem;
     }
     .language-button:hover {
       background: #DC143C;
@@ -267,58 +265,58 @@
       font-family: 'Noto Sans JP', sans-serif;
       color: #6B4E31;
       text-shadow: -0.5px -0.5px 0 #fff, 0.5px -0.5px 0 #fff, -0.5px 0.5px 0 #fff, 0.5px 0.5px 0 #fff;
-      height: 40px; /* Match column header height */
+      height: 40px;
       overflow: hidden;
       display: flex;
       align-items: center;
       padding: 0 0.5rem;
-      transform: none; /* Remove scaling to fit height */
-      font-size: 0.6rem; /* Reduce font size to fit */
+      transform: none;
+      font-size: 0.6rem;
     }
     .points-table {
-      display: none; /* Hide the table, show a summary instead */
+      display: none;
     }
     .points-panel::before {
-      content: "Points: 1st: 50, 2nd: 40, 3rd: 35, ..."; /* Summary text */
+      content: "Points: 1st: 50, 2nd: 40, 3rd: 35, ...";
       white-space: nowrap;
     }
   </style>
 </head>
 <body class="flex items-center justify-center p-4">
+  <!-- Language Toggle -->
+  <div class="language-toggle">
+    <button class="language-button active" onclick="switchLanguage('fr')">FR</button>
+    <button class="language-button" onclick="switchLanguage('en')">EN</button>
+    <button class="language-button" onclick="switchLanguage('ja')">日本語</button>
+    <button class="language-button" onclick="switchLanguage('zh')">中文</button>
+  </div>
+
+  <!-- Points Panel -->
+  <div class="points-panel" id="points-panel">
+    <table class="points-table">
+      <thead>
+        <tr>
+          <th id="points-ranking-header">Rang</th>
+          <th id="points-points-header">Points</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>1st</td><td>50</td></tr>
+        <tr><td>2nd</td><td>40</td></tr>
+        <tr><td>3rd</td><td>35</td></tr>
+        <tr><td>4th</td><td>30</td></tr>
+        <tr><td>5th–6th</td><td>25</td></tr>
+        <tr><td>7th–8th</td><td>20</td></tr>
+        <tr><td>9th–12th</td><td>15</td></tr>
+        <tr><td>13th–16th</td><td>10</td></tr>
+        <tr><td>17th+</td><td>5</td></tr>
+        <tr><td id="points-absent" colspan="2">A = Absent</td></tr>
+      </tbody>
+    </table>
+  </div>
+
   <div class="outer-wrapper">
     <div class="container">
-      <!-- Language Toggle -->
-      <div class="language-toggle">
-        <button class="language-button active" onclick="switchLanguage('fr')">FR</button>
-        <button class="language-button" onclick="switchLanguage('en')">EN</button>
-        <button class="language-button" onclick="switchLanguage('ja')">日本語</button>
-        <button class="language-button" onclick="switchLanguage('zh')">中文</button>
-      </div>
-
-      <!-- Points Panel -->
-      <div class="points-panel" id="points-panel">
-        <table class="points-table">
-          <thead>
-            <tr>
-              <th id="points-ranking-header">Rang</th>
-              <th id="points-points-header">Points</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td>1st</td><td>50</td></tr>
-            <tr><td>2nd</td><td>40</td></tr>
-            <tr><td>3rd</td><td>35</td></tr>
-            <tr><td>4th</td><td>30</td></tr>
-            <tr><td>5th–6th</td><td>25</td></tr>
-            <tr><td>7th–8th</td><td>20</td></tr>
-            <tr><td>9th–12th</td><td>15</td></tr>
-            <tr><td>13th–16th</td><td>10</td></tr>
-            <tr><td>17th+</td><td>5</td></tr>
-            <tr><td id="points-absent" colspan="2">A = Absent</td></tr>
-          </tbody>
-        </table>
-      </div>
-
       <h1 id="title" class="text-4xl font-bold text-center">Classement Mensuel Abou Dojo</h1>
 
       <!-- Tabs Container -->
