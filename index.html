@@ -108,14 +108,14 @@
       justify-content: center;
       position: relative;
       width: 100%;
-      max-width: 960px; /* Adjusted to match scaled month bar */
+      max-width: 960px;
       margin: 0 auto;
     }
     .tabs-container {
       position: relative;
       width: 100%;
-      max-width: 960px; /* Scaled up by 20% from 800px */
-      height: 60px; /* Scaled up by 20% from 50px */
+      max-width: 960px;
+      height: 60px;
       overflow: hidden;
       margin-bottom: 2rem;
       margin-top: 2rem;
@@ -221,7 +221,7 @@
     .language-toggle {
       position: absolute;
       top: 10px;
-      left: -100px;
+      left: -26px; /* Adjusted to align right edge with 1st column */
       z-index: 1000;
       display: flex;
       flex-direction: column;
@@ -247,7 +247,7 @@
     .points-panel {
       position: absolute;
       top: 10px;
-      right: -244px;
+      right: -14px; /* Adjusted to align left edge with 5th column */
       background: transparent;
       border: 1px solid #DC143C;
       border-radius: 5px;
@@ -295,8 +295,8 @@
             <tr><td>5th–6th</td><td>25</td></tr>
             <tr><td>7th–8th</td><td>20</td></tr>
             <tr><td>9th–12th</td><td>15</td></tr>
-            <tr><td>13th–16th</td><td>10</td></tr>
-            <tr><td>17th+</td><td>5</td></tr> <!-- Updated from 10 to 5 -->
+            <tr><td>13th–16th</td><td>12</td></tr> <!-- Updated to 12 points -->
+            <tr><td>17th+</td><td>10</td></tr> <!-- Updated to 10 points -->
             <tr><td id="points-absent" colspan="2">A = Absent</td></tr>
           </tbody>
         </table>
@@ -529,17 +529,17 @@
     function updateTabPosition() {
       const tabsTrack = document.getElementById('tabs-track');
       const tabWidth = 150;
-      const containerWidth = 960; /* Updated to match scaled width */
+      const containerWidth = 960;
       const totalWidth = months.length * tabWidth;
       const maxOffset = containerWidth - totalWidth;
-      const borderAdjustment = 2; /* Account for border width (1px on each side) */
+      const borderAdjustment = 2;
 
       let offset = 0;
 
       if (currentIndex === 0) {
         offset = 0;
       } else if (currentIndex === months.length - 1) {
-        offset = containerWidth - totalWidth - borderAdjustment; /* Adjust for border on right */
+        offset = containerWidth - totalWidth - borderAdjustment;
       } else {
         offset = -currentIndex * tabWidth + containerWidth / 2 - tabWidth / 2;
       }
