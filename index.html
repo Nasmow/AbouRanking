@@ -35,6 +35,8 @@
       min-height: 100vh;
       font-family: 'Noto Sans JP', sans-serif;
       position: relative;
+      box-sizing: border-box; /* Ensure padding doesn't affect width */
+      padding: 1rem;
     }
     .container {
       background: url('https://nasmow.github.io/Ranking/ranking_background2.jpg') no-repeat top center;
@@ -110,21 +112,21 @@
       align-items: center;
       justify-content: center;
       position: relative;
-      width: 100%;
-      max-width: 960px;
-      min-width: 960px; /* Ensure tabs-container doesn't shrink */
+      width: 960px; /* Force exact width */
+      max-width: none; /* Remove max-width constraint */
+      min-width: 960px;
       margin: 0 auto;
       flex-wrap: wrap;
     }
     .tabs-container {
       position: relative;
-      width: 100%;
-      max-width: 960px;
+      width: 960px; /* Force exact width */
+      max-width: none; /* Remove max-width constraint */
       height: 60px;
       overflow: hidden;
       margin-bottom: 2rem;
       margin-top: 2rem;
-      flex: 0 0 960px;
+      flex: none; /* Remove flex properties */
     }
     .tabs-track {
       display: flex;
@@ -180,10 +182,10 @@
       line-height: 1;
     }
     .scroll-arrow.left {
-      left: -40px;
+      left: 0; /* Move inside the container */
     }
     .scroll-arrow.right {
-      right: -40px;
+      right: 0; /* Move inside the container */
     }
     .scroll-arrow:hover {
       background: #DC143C;
@@ -227,14 +229,13 @@
     }
     .language-toggle {
       position: fixed;
-      top: 388px; /* Align with column headers */
+      top: 388px;
       left: 20px;
       z-index: 1000;
       display: flex;
-      flex-direction: row;
+      flex-direction: column; /* Stack buttons vertically */
       gap: 5px;
-      height: 40px;
-      align-items: center;
+      align-items: flex-start;
       overflow: hidden;
     }
     .language-button {
@@ -257,7 +258,7 @@
     }
     .points-panel {
       position: fixed;
-      top: 388px; /* Align with column headers */
+      top: 388px;
       right: 20px;
       background: transparent;
       border: 1px solid #DC143C;
@@ -268,12 +269,11 @@
       text-shadow: -0.5px -0.5px 0 #fff, 0.5px -0.5px 0 #fff, -0.5px 0.5px 0 #fff, 0.5px 0.5px 0 #fff;
       padding: 0.5rem;
       font-size: 0.6rem;
+      transform: scale(1.4); /* Scale up by 40% */
+      transform-origin: top right; /* Scale from top-right corner */
     }
     .points-table {
-      display: table; /* Show the table to spread downward */
-    }
-    .points-panel::before {
-      content: none; /* Remove the pseudo-element */
+      display: table;
     }
     .points-table th, .points-table td {
       padding: 0.2rem 0.5rem;
@@ -282,7 +282,7 @@
     }
   </style>
 </head>
-<body class="flex items-center justify-center p-4">
+<body class="flex items-center justify-center">
   <!-- Language Toggle -->
   <div class="language-toggle">
     <button class="language-button active" onclick="switchLanguage('fr')">FR</button>
@@ -515,7 +515,7 @@
         tabsTrack.appendChild(button);
       });
 
-      // Set initial position to center April 2025
+      // Set initial position to April 2025
       const april2025Index = months.findIndex(item => item.month === 'April' && item.year === '2025');
       currentIndex = april2025Index;
       updateTabPosition();
@@ -548,16 +548,10 @@
       const totalWidth = months.length * tabWidth;
       const maxOffset = containerWidth - totalWidth;
 
-      let offset = 0;
+      // Calculate offset to position the current tab's left edge at the container's left edge
+      let offset = -currentIndex * tabWidth;
 
-      if (currentIndex === 0) {
-        offset = 0;
-      } else if (currentIndex === months.length - 1) {
-        offset = containerWidth - totalWidth;
-      } else {
-        offset = -currentIndex * tabWidth + containerWidth / 2 - tabWidth / 2;
-      }
-
+      // Ensure the offset doesn't exceed bounds
       offset = Math.min(0, Math.max(maxOffset, offset));
 
       tabsTrack.style.transform = `translateX(${offset}px)`;
