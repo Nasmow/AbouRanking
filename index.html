@@ -35,7 +35,7 @@
       min-height: 100vh;
       font-family: 'Noto Sans JP', sans-serif;
       position: relative;
-      box-sizing: border-box; /* Ensure padding doesn't affect width */
+      box-sizing: border-box;
       padding: 1rem;
     }
     .container {
@@ -112,21 +112,21 @@
       align-items: center;
       justify-content: center;
       position: relative;
-      width: 960px; /* Force exact width */
-      max-width: none; /* Remove max-width constraint */
+      width: 960px;
+      max-width: none;
       min-width: 960px;
       margin: 0 auto;
       flex-wrap: wrap;
     }
     .tabs-container {
       position: relative;
-      width: 960px; /* Force exact width */
-      max-width: none; /* Remove max-width constraint */
+      width: 960px;
+      max-width: none;
       height: 60px;
       overflow: hidden;
       margin-bottom: 2rem;
       margin-top: 2rem;
-      flex: none; /* Remove flex properties */
+      flex: none;
     }
     .tabs-track {
       display: flex;
@@ -182,10 +182,10 @@
       line-height: 1;
     }
     .scroll-arrow.left {
-      left: 0; /* Move inside the container */
+      left: 0;
     }
     .scroll-arrow.right {
-      right: 0; /* Move inside the container */
+      right: 0;
     }
     .scroll-arrow:hover {
       background: #DC143C;
@@ -233,7 +233,7 @@
       left: 20px;
       z-index: 1000;
       display: flex;
-      flex-direction: column; /* Stack buttons vertically */
+      flex-direction: column;
       gap: 5px;
       align-items: flex-start;
       overflow: hidden;
@@ -269,8 +269,8 @@
       text-shadow: -0.5px -0.5px 0 #fff, 0.5px -0.5px 0 #fff, -0.5px 0.5px 0 #fff, 0.5px 0.5px 0 #fff;
       padding: 0.5rem;
       font-size: 0.6rem;
-      transform: scale(1.4); /* Scale up by 40% */
-      transform-origin: top right; /* Scale from top-right corner */
+      transform: scale(1.4);
+      transform-origin: top right;
     }
     .points-table {
       display: table;
@@ -279,6 +279,14 @@
       padding: 0.2rem 0.5rem;
       text-align: left;
       border-bottom: 1px solid rgba(220, 20, 60, 0.3);
+    }
+    .player-link {
+      color: #6B4E31;
+      text-decoration: none;
+    }
+    .player-link:hover {
+      text-decoration: underline;
+      color: #DC143C;
     }
   </style>
 </head>
@@ -619,7 +627,7 @@
           }
           tr.innerHTML = `
             <td>${row.placement || ''}</td>
-            <td>${row.player || ''}</td>
+            <td><a href="${row.startggprofile || '#'}" target="_blank" class="player-link">${row.player || ''}</a></td>
             <td>${row.totalpoints || ''}</td>
             <td>${winRateDisplay}</td>
             <td>${placements}</td>
