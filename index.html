@@ -85,7 +85,7 @@
       height: 40px;
       box-sizing: border-box;
     }
-    .ranking-table th:nth-child(5) {
+    .ranking-table th:nth-child(4) {
       font-family: 'Noto Sans JP', sans-serif;
     }
     .ranking-table td {
@@ -94,38 +94,48 @@
       font-weight: bold;
       line-height: 1.1;
     }
-    .ranking-table td:nth-child(5) {
+    .ranking-table td:nth-child(4) {
       font-family: 'Noto Sans JP', sans-serif;
       white-space: nowrap;
     }
     /* Ensure consistent font size for Win Rate column */
-    .ranking-table tr.rank-1 td:nth-child(5),
-    .ranking-table td:nth-child(5) {
+    .ranking-table tr.rank-1 td:nth-child(4),
+    .ranking-table td:nth-child(4) {
       font-size: 1.5rem;
     }
-    /* Adjust column widths to accommodate new Change column */
-    .ranking-table th:nth-child(1), .ranking-table td:nth-child(1) { width: 10%; } /* Change column */
-    .ranking-table th:nth-child(2), .ranking-table td:nth-child(2) { width: 10%; } /* Rank */
-    .ranking-table th:nth-child(3), .ranking-table td:nth-child(3) { width: 25%; } /* Player */
-    .ranking-table th:nth-child(4), .ranking-table td:nth-child(4) { width: 15%; } /* Points */
-    .ranking-table th:nth-child(5), .ranking-table td:nth-child(5) { width: 30%; } /* Win Rate */
-    .ranking-table th:nth-child(6), .ranking-table td:nth-child(6) { width: 10%; } /* Placements */
+    /* Scale up the Rank column by 10% */
+    .ranking-table td:nth-child(1) {
+      font-size: 2.2rem; /* 10% larger than 2rem */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    /* Adjust column widths (5 columns total) */
+    .ranking-table th:nth-child(1), .ranking-table td:nth-child(1) { width: 10%; } /* Rank */
+    .ranking-table th:nth-child(2), .ranking-table td:nth-child(2) { width: 30%; } /* Player */
+    .ranking-table th:nth-child(3), .ranking-table td:nth-child(3) { width: 15%; } /* Points */
+    .ranking-table th:nth-child(4), .ranking-table td:nth-child(4) { width: 35%; } /* Win Rate */
+    .ranking-table th:nth-child(5), .ranking-table td:nth-child(5) { width: 10%; } /* Placements */
     .ranking-table tr.rank-1 td {
       font-size: 2rem;
       font-weight: bold;
       line-height: 1.1;
     }
+    .ranking-table tr.rank-1 td:nth-child(1) {
+      font-size: 2.2rem; /* Ensure rank-1 also scales up */
+    }
     /* Styles for ranking change arrows */
     .rank-change {
       position: relative;
       display: inline-block;
-      width: 30px;
-      height: 30px;
-      line-height: 30px;
+      width: 20px; /* Smaller size to fit close to rank */
+      height: 20px;
+      line-height: 20px;
       text-align: center;
-      font-size: 1rem;
+      font-size: 0.8rem;
       font-weight: bold;
       color: #fff;
+      margin-left: 2px; /* Very close to the rank number */
     }
     .rank-up {
       background: url('https://nasmow.github.io/Ranking/up-arrow.png') no-repeat center center;
@@ -376,7 +386,6 @@
     const translations = {
       en: {
         title: "Monthly Ladder Abou Dojo",
-        change: "Change",
         rank: "Rank",
         player: "Player",
         points: "Points",
@@ -402,7 +411,6 @@
       },
       fr: {
         title: "Classement Mensuel Abou Dojo",
-        change: "Changement",
         rank: "Rang",
         player: "Joueur",
         points: "Points",
@@ -428,7 +436,6 @@
       },
       ja: {
         title: "阿部道場月間ランキング",
-        change: "変化",
         rank: "順位",
         player: "選手",
         points: "ポイント",
@@ -454,7 +461,6 @@
       },
       zh: {
         title: "阿部道场月度排名",
-        change: "变化",
         rank: "排名",
         player: "选手",
         points: "积分",
@@ -549,7 +555,6 @@
             <table class="ranking-table w-full">
               <thead>
                 <tr>
-                  <th>${translations[lang].change}</th>
                   <th>${translations[lang].rank}</th>
                   <th>${translations[lang].player}</th>
                   <th>${translations[lang].points}</th>
@@ -669,7 +674,7 @@
         renderTable(normalizedData, tableId, year, month);
       } catch (error) {
         console.error(`Error loading ${file}:`, error);
-        document.getElementById(tableId).innerHTML = `<tr><td colspan="6" class="text-center">${currentLanguage === 'fr' ? 'Erreur de chargement des données' : translations[currentLanguage].error || 'Error loading data'}</td></tr>`;
+        document.getElementById(tableId).innerHTML = `<tr><td colspan="5" class="text-center">${currentLanguage === 'fr' ? 'Erreur de chargement des données' : translations[currentLanguage].error || 'Error loading data'}</td></tr>`;
       }
     }
 
@@ -727,7 +732,7 @@
         }
       }
 
-      // Step 3: Render table with ranking changes
+      // Step 3: Render table with ranking changes in the Rank column
       data.forEach(row => {
         const tr = document.createElement('tr');
         if (row.placement === 1) {
@@ -773,8 +778,7 @@
         }
 
         tr.innerHTML = `
-          <td>${changeDisplay}</td>
-          <td>${row.placement || ''}</td>
+          <td>${row.placement || ''}${changeDisplay}</td>
           <td><a href="${row.startggprofile || '#'}" target="_blank" class="player-link">${row.player || ''}</a></td>
           <td>${row.totalpoints || ''}</td>
           <td>${winRateDisplay}</td>
@@ -797,7 +801,6 @@
           <table class="ranking-table w-full">
             <thead>
               <tr>
-                <th>${translations[currentLanguage].change}</th>
                 <th>${translations[currentLanguage].rank}</th>
                 <th>${translations[currentLanguage].player}</th>
                 <th>${translations[currentLanguage].points}</th>
