@@ -126,6 +126,11 @@
       font-size: 1.1rem; /* Half the size of rank (2.2rem / 2) */
       margin-left: 4px; /* Space between rank and symbol */
     }
+    .rank-placeholder {
+      font-size: 1.1rem; /* Same size as rank-change */
+      margin-left: 4px; /* Same spacing as rank-change */
+      visibility: hidden; /* Invisible but takes up space */
+    }
     .rank-up {
       color: #00FF00; /* Green for upward change */
     }
@@ -760,8 +765,14 @@
               changeDisplay = `<span class="rank-change rank-up">+${change}</span>`;
             } else if (change < 0) {
               changeDisplay = `<span class="rank-change rank-down">−${Math.abs(change)}</span>`;
+            } else {
+              changeDisplay = `<span class="rank-placeholder">+0</span>`; // Invisible placeholder for alignment
             }
+          } else {
+            changeDisplay = `<span class="rank-placeholder">+0</span>`; // Invisible placeholder for alignment
           }
+        } else {
+          changeDisplay = `<span class="rank-placeholder">+0</span>`; // Invisible placeholder for alignment
         }
 
         tr.innerHTML = `
