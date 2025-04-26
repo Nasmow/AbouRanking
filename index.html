@@ -683,7 +683,7 @@
       if (isCurrentMonth) {
         // Step 1: Calculate weekly points for each player
         const players = data.map(row => {
-          const weeklyPlacements = (row.pereventrankings || '').split('/').map(item => item.trim());
+          const weeklyPlacements = (row.pereventrankings || '').split('/').map(item => item.trim()).reverse(); // Reverse the order
           const weeklyPoints = weeklyPlacements.map(placement => getPointsForPlacement(placement));
           let cumulativePoints = [];
           weeklyPoints.reduce((acc, points, index) => {
