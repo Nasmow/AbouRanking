@@ -621,8 +621,8 @@
           let winRateDisplay = 'N/A';
           if (year === '2025') {
             const winRate = row.winrate || 0;
-            const wins = row.matcheswon || 0;
-            const losses = row.matcheslost || 0;
+            const wins = row.matcheswon || row.gameswon || 0;
+            const losses = row.matcheslost || row.gameslost || 0;
             winRateDisplay = `${Math.round(winRate)}%(${wins}/${losses})`;
           }
           tr.innerHTML = `
