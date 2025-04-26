@@ -106,9 +106,6 @@
     /* Scale up the Rank column by 10% */
     .ranking-table td:nth-child(1) {
       font-size: 2.2rem; /* 10% larger than 2rem */
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
     /* Adjust column widths (5 columns total) */
     .ranking-table th:nth-child(1), .ranking-table td:nth-child(1) { width: 10%; } /* Rank */
@@ -124,26 +121,16 @@
     .ranking-table tr.rank-1 td:nth-child(1) {
       font-size: 2.2rem; /* Ensure rank-1 also scales up */
     }
-    /* Styles for ranking change arrows */
+    /* Styles for ranking change symbols */
     .rank-change {
-      position: relative;
-      display: inline-block;
-      width: 20px; /* Smaller size to fit close to rank */
-      height: 20px;
-      line-height: 20px;
-      text-align: center;
-      font-size: 0.8rem;
-      font-weight: bold;
-      color: #fff;
-      margin-left: 2px; /* Very close to the rank number */
+      font-size: 1.1rem; /* Half the size of rank (2.2rem / 2) */
+      margin-left: 4px; /* Space between rank and symbol */
     }
     .rank-up {
-      background: url('https://nasmow.github.io/Ranking/up-arrow.png') no-repeat center center;
-      background-size: contain;
+      color: #00FF00; /* Green for upward change */
     }
     .rank-down {
-      background: url('https://nasmow.github.io/Ranking/down-arrow.png') no-repeat center center;
-      background-size: contain;
+      color: #FF0000; /* Red for downward change */
     }
     .outer-wrapper {
       display: flex;
@@ -749,7 +736,7 @@
           const winRate = row.winrate || 0;
           let wins = Number(row.gameswon || 0);
           let losses = Number(row.gameslost || 0);
-          if (wins === 0 && losses === 0 && winRate > 0) {
+          if (wins === 0 && losses == 0 && winRate > 0) {
             const totalGames = Math.round((wins + losses) || 40);
             wins = Math.round((winRate / 100) * totalGames);
             losses = totalGames - wins;
@@ -770,9 +757,9 @@
           if (lastRank && secondLastRank) {
             const change = secondLastRank - lastRank; // Positive means moved up, negative means moved down
             if (change > 0) {
-              changeDisplay = `<span class="rank-change rank-up">${change}</span>`;
+              changeDisplay = `<span class="rank-change rank-up">+${change}</span>`;
             } else if (change < 0) {
-              changeDisplay = `<span class="rank-change rank-down">${Math.abs(change)}</span>`;
+              changeDisplay = `<span class="rank-change rank-down">−${Math.abs(change)}</span>`;
             }
           }
         }
