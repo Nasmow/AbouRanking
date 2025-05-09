@@ -493,7 +493,7 @@
       { month: 'January', year: '2025' },
       { month: 'February', year: '2025' },
       { month: 'March', year: '2025' },
-      { month: 'April', year: '2025' }
+      { month: 'April', year: '2025' },
       { month: 'May', year: '2025' }
     ];
 
@@ -573,7 +573,7 @@
         const monthName = translations[currentLanguage].months[item.month];
 
         const button = document.createElement('button');
-        button.className = `tab-button ${item.month === 'April' && item.year === '2025' ? 'active' : ''}`;
+        button.className = `tab-button ${item.month === 'May' && item.year === '2025' ? 'active' : ''}`;
         if (currentLanguage === 'ja') {
           button.classList.add('ja');
         }
@@ -583,9 +583,9 @@
         tabsTrack.appendChild(button);
       });
 
-      // Set initial position to April 2025
-      const april2025Index = months.findIndex(item => item.month === 'April' && item.year === '2025');
-      currentIndex = april2025Index;
+      // Set initial position to May 2025
+      const may2025Index = months.findIndex(item => item.month === 'May' && item.year === '2025');
+      currentIndex = may2025Index;
       updateTabPosition();
       positionYearDisplay();
     }
@@ -676,8 +676,8 @@
       const tbody = document.getElementById(tableId);
       tbody.innerHTML = '';
 
-      // Determine if this is the current month (April 2025)
-      const isCurrentMonth = (month === 'April' && year === '2025');
+      // Determine if this is the current month (May 2025)
+      const isCurrentMonth = (month === 'May' && year === '2025');
 
       // Calculate weekly rankings and changes
       let weeklyRankings = [];
@@ -795,7 +795,7 @@
         const monthId = `${item.month.toLowerCase()}-${item.year}`;
         const contentDiv = document.createElement('div');
         contentDiv.id = monthId;
-        contentDiv.className = `tab-content ${item.month === 'April' && item.year === '2025' ? 'active' : ''}`;
+        contentDiv.className = `tab-content ${item.month === 'May' && item.year === '2025' ? 'active' : ''}`;
         contentDiv.innerHTML = `
           <table class="ranking-table w-full">
             <thead>
